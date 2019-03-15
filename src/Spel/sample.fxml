@@ -2,13 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import Spel.AlgemenePion?>
 
 <BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Spel.Controller">
    <center>
@@ -26,22 +26,22 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <AlgemenePion fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </center>
@@ -86,92 +86,92 @@
    <left>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="150.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="Wit1" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            <AlgemenePion fx:id="Wit1" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Wit2" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Wit2" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Wit3" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Wit3" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Wit4" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Wit4" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Wit5" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Wit5" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Wit6" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Wit6" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Wit7" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Wit7" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Wit8" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Wit8" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
+            </AlgemenePion>
          </children>
       </VBox>
    </left>
    <right>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="150.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="Zwart1" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            <AlgemenePion fx:id="Zwart1" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Zwart2" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Zwart2" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Zwart3" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Zwart3" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Zwart4" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Zwart4" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Zwart5" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Zwart5" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Zwart6" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Zwart6" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Zwart7" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Zwart7" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
-            <ImageView fx:id="Zwart8" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+            </AlgemenePion>
+            <AlgemenePion fx:id="Zwart8" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets bottom="5.0" left="40.0" />
                </VBox.margin>
-            </ImageView>
+            </AlgemenePion>
          </children>
       </VBox>
    </right>

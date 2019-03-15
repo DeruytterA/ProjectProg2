@@ -6,23 +6,23 @@ import javafx.scene.layout.GridPane;
 
 public class Controller {
 
-    public ImageView Wit1;
-    public ImageView Wit2;
-    public ImageView Wit3;
-    public ImageView Wit4;
-    public ImageView Wit5;
-    public ImageView Wit6;
-    public ImageView Wit7;
-    public ImageView Wit8;
+    public AlgemenePion Wit1;
+    public AlgemenePion Wit2;
+    public AlgemenePion Wit3;
+    public AlgemenePion Wit4;
+    public AlgemenePion Wit5;
+    public AlgemenePion Wit6;
+    public AlgemenePion Wit7;
+    public AlgemenePion Wit8;
 
-    public ImageView Zwart1;
-    public ImageView Zwart2;
-    public ImageView Zwart3;
-    public ImageView Zwart4;
-    public ImageView Zwart5;
-    public ImageView Zwart6;
-    public ImageView Zwart7;
-    public ImageView Zwart8;
+    public AlgemenePion Zwart1;
+    public AlgemenePion Zwart2;
+    public AlgemenePion Zwart3;
+    public AlgemenePion Zwart4;
+    public AlgemenePion Zwart5;
+    public AlgemenePion Zwart6;
+    public AlgemenePion Zwart7;
+    public AlgemenePion Zwart8;
 
     public GridPane grid;
 
@@ -47,12 +47,9 @@ public class Controller {
 
         for(int i = 0; i < grid.getColumnCount(); i++){
             for(int j = 0; j < grid.getRowCount(); j++ ){
-                ImageView img = new ImageView();
-                img.setImage(new Image("Spel/Photos/Kruis.png"));
-                grid.add(img,i,j);
+                grid.add(new ImageView(new Image("Spel/Photos/achtergrond.png")),i,j);
             }
         }
-
     }
 
     public void buttenBackAll(){
