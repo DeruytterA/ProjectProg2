@@ -44,7 +44,6 @@ public class SpelModel implements Observable {
         vulLijst(zwartOver);
 
         controller.setModel(this);
-        controller.setServer(server);
         server.setModel(this);
     }
 
