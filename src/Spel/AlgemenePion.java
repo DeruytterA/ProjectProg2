@@ -1,8 +1,10 @@
 package Spel;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.scene.image.ImageView;
 
-public class AlgemenePion extends ImageView {
+public class AlgemenePion extends ImageView implements InvalidationListener{
 
     private int positieX;
     private int positieY;
@@ -13,39 +15,15 @@ public class AlgemenePion extends ImageView {
         super();
     }
 
-    public boolean isGeplaatst() {
-        return geplaatst;
+    public void invalidated(Observable var1){
+
     }
 
-    public void setGeplaatst(boolean geplaatst) {
-        this.geplaatst = geplaatst;
+    public void setPositieX(int x){
+        positieX = x;
     }
 
-    public int getPositieX() {
-        return positieX;
-    }
-
-    public void setPositieX(int positieX) {
-        this.positieX = positieX;
-    }
-
-    public int getPositieY() {
-        return positieY;
-    }
-
-    public void setPositieY(int positieY) {
-        this.positieY = positieY;
-    }
-
-    public int getKleur() {
-        return kleur;
-    }
-
-    public void setKleur(int kleur) {
-        this.kleur = kleur;
-    }
-
-    public void play(int xPositie, int yPositie){
-
+    public void setPositieY(int y){
+        positieY = y;
     }
 }
