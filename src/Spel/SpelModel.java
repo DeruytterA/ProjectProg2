@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 
 public class SpelModel implements Observable {
 
-    private ServerController server;
     private Controller controller;
 
     private ArrayList<AlgemenePion> stappenlijst;
@@ -22,10 +21,10 @@ public class SpelModel implements Observable {
 
     private int plaatsnu;
 
-    public SpelModel(ServerController server, Controller controller) {
+    public SpelModel(Controller controller) {
+        stappenlijst = new ArrayList<>();
         plaatsnu = 0;
         this.controller = controller;
-        this.server = server;
         //het vullen van de lijst met soorten pionnen
         soortenPionnen = new Character[4];
         soortenPionnen[0] = '+';
@@ -44,7 +43,6 @@ public class SpelModel implements Observable {
         vulLijst(zwartOver);
 
         controller.setModel(this);
-        server.setModel(this);
     }
 
     private void vulLijst(ArrayList<AlgemenePion> lijst){
@@ -69,7 +67,7 @@ public class SpelModel implements Observable {
     }
 
     public AlgemenePion parseStringToPion(String line){
-        char type = line.charAt(9);
+        char type = line.charAt(8);
         return characterSupplierMap.get(type).get();
     }
 

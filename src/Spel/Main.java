@@ -16,8 +16,8 @@ public class Main extends Application {
         Parent root = loader.load();
         Controller cont = loader.getController();
         List<String> parameters = getParameters().getRaw();
-        ServerController server = new ServerController(parameters.get(0),parameters.get(1));
-        SpelModel model = new SpelModel(server, cont);
+        SpelModel model = new SpelModel(cont);
+        ServerController server = new ServerController(parameters.get(0),parameters.get(1),model);
         primaryStage.setTitle("MijnLieff");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();

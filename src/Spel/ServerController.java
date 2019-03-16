@@ -9,15 +9,19 @@ public class ServerController {
     private SpelModel model;
     private boolean gesloten;
 
-    public ServerController(String server, String poort) {
+    public ServerController(String server, String poort, SpelModel model) {
+        this.model = model;
         try(Socket socket = new Socket(server, Integer.parseInt(poort));
             BufferedReader serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter serverOut = new PrintWriter(socket.getOutputStream(), true);
+            PrintWriter serverOut = new PrintWriter(socket.getOutputStream(), true)
         ){
-            String inputlijn;
-            while ((inputlijn = serverIn.readLine()).charAt(3) != 'T'){
+
+            serverOut.println("X");
+            String inputlijn = serverIn.readLine();
+            while (inputlijn != null && inputlijn.charAt(3) != 'T'){
                 model.update(inputlijn);
                 serverOut.println("X");
+                inputlijn = serverIn.readLine();
             }
         }catch (UnknownHostException ex){
             throw new RuntimeException("UnknownHostException when making socket " + ex);
@@ -26,9 +30,6 @@ public class ServerController {
         }
     }
 
-    public void setModel(SpelModel model) {
-        this.model = model;
-    }
 
 
 }
