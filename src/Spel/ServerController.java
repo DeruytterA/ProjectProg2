@@ -18,11 +18,12 @@ public class ServerController {
 
             serverOut.println("X");
             String inputlijn = serverIn.readLine();
-            while (inputlijn != null && inputlijn.charAt(3) != 'T'){
+            while (inputlijn.charAt(2) != 'T'){
                 model.update(inputlijn);
                 serverOut.println("X");
                 inputlijn = serverIn.readLine();
             }
+            model.update(inputlijn);
         }catch (UnknownHostException ex){
             throw new RuntimeException("UnknownHostException when making socket " + ex);
         }catch (IOException ex){
