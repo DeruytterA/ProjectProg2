@@ -2,14 +2,22 @@ package mijnlieff;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+
+import java.util.ArrayList;
 
 public class Controller implements InvalidationListener {
+
+    public Button buttonBack;
+    public Button buttonBackAll;
+    public Button buttonForward;
+    public Button buttonForwardAll;
 
     public GridPane grid;
     public BorderPane borderPane;
@@ -19,20 +27,27 @@ public class Controller implements InvalidationListener {
 
 
     public void initialize () {
-        for(int i = 0; i < grid.getColumnCount(); i++){
-            for(int j = 0; j < grid.getRowCount(); j++ ){
-                grid.add(new ImageView(new Image("mijnlieff/Photos/achtergrond.png")),i,j);
-            }
-        }
+        //grid.setBackground(new Background(new BackgroundImage(new Image("mijnlieff/Photos/achtergrond.png"), BackgroundRepeat.SPACE, BackgroundRepeat.SPACE, BackgroundPosition.CENTER,new BackgroundSize(150,150,false,false,false,false))));
+        buttonBack.setDisable(true);
+        buttonBackAll.setDisable(true);
     }
 
     public void invalidated(Observable var1){
         grid = model.getgrid();
+        ObservableList<Node> childrens = grid.getChildren();
+        for (Node child:childrens) {
+            if (child instanceof AlgemenePion) {
+                AlgemenePion hulp = (AlgemenePion) child;
+                hulp.setFitWidth(150.0);
+                hulp.setFitHeight(150.0);
+            }
+        }
         over = model.getOver();
         borderPane.setLeft(over[0]);
         borderPane.setRight(over[1]);
         BorderPane.setAlignment(over[0], Pos.CENTER);
         BorderPane.setAlignment(over[1], Pos.CENTER);
+        checkButtons();
     }
 
     public GridPane getSpeelveld(){
@@ -54,6 +69,25 @@ public class Controller implements InvalidationListener {
     }
     public void buttonForwardAll(){
         model.forwardAll();
+    }
+
+    public void checkButtons(){
+        int plaats = model.getPlaatsnu();
+        ArrayList<Stap> stappenlijst = model.getStappenlijst();
+        if (stappenlijst.size() == plaats){
+            buttonForward.setDisable(true);
+            buttonForwardAll.setDisable(true);
+        }else{
+            buttonForward.setDisable(false);
+            buttonForwardAll.setDisable(false);
+        }
+        if (plaats == 0){
+            buttonBackAll.setDisable(true);
+            buttonBack.setDisable(true);
+        }else{
+            buttonBackAll.setDisable(false);
+            buttonBack.setDisable(false);
+        }
     }
 
     /*

@@ -14,11 +14,11 @@ public class ServerController {
             serverOut.println("X");
             String inputlijn = serverIn.readLine();
             while (inputlijn.charAt(2) != 'T'){
-                model.parseStringToPion(inputlijn);
+                model.parseStringToStap(inputlijn);
                 serverOut.println("X");
                 inputlijn = serverIn.readLine();
             }
-            model.parseStringToPion(inputlijn);
+            model.parseStringToStap(inputlijn);
         }catch (UnknownHostException ex){
             throw new RuntimeException("UnknownHostException when making socket " + ex);
         }catch (IOException ex){

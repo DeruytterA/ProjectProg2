@@ -2,6 +2,8 @@ package mijnlieff;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+
+import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -11,20 +13,42 @@ import java.util.function.Supplier;
 public class SpelModel implements Observable {
 
     private int plaatsnu;
-    private Controller controller;
 
     private GridPane speelveld;
-
     private ArrayList<Stap> stappenlijst;
     private VBox witOver;
     private VBox zwartOver;
+    private ArrayList<Node> allePionnen;
+
+    private ArrayList<Loper> zwarteLopers;
+    private ArrayList<Puller> zwartePullers;
+    private ArrayList<Pusher> zwartePuchers;
+    private ArrayList<Toren> zwarteTorens;
+
+    private ArrayList<Loper> witteLopers;
+    private ArrayList<Puller> wittePullers;
+    private ArrayList<Pusher> wittePuchers;
+    private ArrayList<Toren> witteTorens;
+
+
     private ArrayList<InvalidationListener> listeners;
+
     private Map<Character, Supplier<AlgemenePion>> characterSupplierMap;
     private Character[] soortenPionnen;
     private String kleur;
 
 
     public SpelModel(Controller controller) {
+        zwartePullers = new ArrayList<>();
+        zwartePuchers = new ArrayList<>();
+        zwarteLopers = new ArrayList<>();
+        zwarteTorens = new ArrayList<>();
+
+        wittePullers = new ArrayList<>();
+        wittePuchers = new ArrayList<>();
+        witteLopers = new ArrayList<>();
+        witteTorens = new ArrayList<>();
+
         speelveld = new GridPane();
         speelveld = controller.getSpeelveld();
         kleur = "wit";
@@ -32,7 +56,6 @@ public class SpelModel implements Observable {
         listeners = new ArrayList<>();
         stappenlijst = new ArrayList<>();
         plaatsnu = 0;
-        this.controller = controller;
 
         //het vullen van de hashmap van factory's
         characterSupplierMap.put('+', Toren::new);
@@ -48,7 +71,12 @@ public class SpelModel implements Observable {
 
         witOver = vulKolommen("wit");
         zwartOver = vulKolommen("zwart");
+        allePionnen = new ArrayList<>();
 
+        allePionnen.addAll(witOver.getChildren());
+        allePionnen.addAll(zwartOver.getChildren());
+
+        setLijst();
         controller.setModel(this);
         addListener(controller);
         awakeListners();
@@ -58,7 +86,9 @@ public class SpelModel implements Observable {
         ArrayList<AlgemenePion> hulplijst = new ArrayList<>();
         for (Character teken:soortenPionnen) {
             for (int j = 0; j < 2; j++) {
-                hulplijst.add(characterSupplierMap.get(teken).get());
+                AlgemenePion pion = characterSupplierMap.get(teken).get();
+                pion.setKleur(kleur);
+                hulplijst.add(pion);
             }
         }
         for (AlgemenePion pion:hulplijst) {
@@ -87,25 +117,127 @@ public class SpelModel implements Observable {
     public void voegToeAanGrid(){
         Stap stap = stappenlijst.get(plaatsnu - 1);
         speelveld.add(stap.getPion(), stap.getxWaarde(), stap.getyWaarde());
-        //TODO verwijderen uit VBox
+        stap.getPion().opVeld();
+        if (stap.getPion().getKleur().equals("wit")){
+            witOver.getChildren().remove(stap.getPion());
+        }else{
+            zwartOver.getChildren().remove(stap.getPion());
+        }
     }
 
     public void verwijderUitGrid(){
-        speelveld = new GridPane();;
-        for (int i = 0; i < plaatsnu; i++){
-            voegToeAanGrid();
+        //TODO helemaal opnieuw maken
+        speelveld = new GridPane();
+        Stap stap = stappenlijst.get(plaatsnu);
+        stap.getPion().aanRand();
+        for (int i = 0; i + 1 < plaatsnu; i++){
+            Stap stapi = stappenlijst.get(i);
+            speelveld.add(stapi.getPion(), stapi.getxWaarde(), stapi.getyWaarde());
         }
-        //TODO toevoegen aan VBOX
+        if (stap.getPion().getKleur().equals("wit")){
+            witOver.getChildren().add(stap.getPion());
+            stap.getPion().setFitHeight(75.0);
+            stap.getPion().setFitWidth(75.0);
+        }else{
+            zwartOver.getChildren().add(stap.getPion());
+            stap.getPion().setFitHeight(75.0);
+            stap.getPion().setFitWidth(75.0);
+        }
     }
 
-    public void parseStringToPion(String line){
+    public void setLijst(){
+        for (Node pion:allePionnen) {
+            if (pion instanceof Loper){
+                if(((Loper) pion).getKleur().equals("wit")){
+                    witteLopers.add((Loper) pion);
+                }else{
+                    zwarteLopers.add((Loper) pion);
+                }
+            }else if (pion instanceof Puller){
+                if(((Puller) pion).getKleur().equals("wit")){
+                    wittePullers.add((Puller) pion);
+                }else{
+                    zwartePullers.add((Puller) pion);
+                }
+            }else if (pion instanceof Pusher){
+                if(((Pusher) pion).getKleur().equals("wit")){
+                    wittePuchers.add((Pusher) pion);
+                }else{
+                    zwartePuchers.add((Pusher) pion);
+                }
+            }else if (pion instanceof Toren){
+                if(((Toren) pion).getKleur().equals("wit")){
+                    witteTorens.add((Toren) pion);
+                }else{
+                    zwarteTorens.add((Toren) pion);
+                }
+            }
+        }
+    }
+
+    public void parseStringToStap(String line){
         char type = line.charAt(8);
         int xWaarde = Character.getNumericValue(line.charAt(4));
         int yWaarde = Character.getNumericValue(line.charAt(6));
-        AlgemenePion pion = characterSupplierMap.get(type).get();
-        pion.setKleur(kleur);
+        AlgemenePion pion;
+        if (type == '+'){
+            if (kleur.equals("wit")){
+                if (speelveld.getChildren().contains(witteTorens.get(0))){
+                    pion = witteTorens.get(1);
+                }else{
+                    pion = witteTorens.get(0);
+                }
+            }else{
+                if (speelveld.getChildren().contains(zwarteTorens.get(0))){
+                    pion = zwarteTorens.get(1);
+                }else{
+                    pion = zwarteTorens.get(0);
+                }
+            }
+        }else if (type == 'X'){
+            if (kleur.equals("wit")){
+                if (speelveld.getChildren().contains(witteLopers.get(0))){
+                    pion = witteLopers.get(1);
+                }else{
+                    pion = witteLopers.get(0);
+                }
+            }else{
+                if (speelveld.getChildren().contains(zwarteLopers.get(0))){
+                    pion = zwarteLopers.get(1);
+                }else{
+                    pion = zwarteLopers.get(0);
+                }
+            }
+        }else if (type == '@'){
+            if (kleur.equals("wit")){
+                if (speelveld.getChildren().contains(wittePuchers.get(0))){
+                    pion = wittePuchers.get(1);
+                }else{
+                    pion = wittePuchers.get(0);
+                }
+            }else{
+                if (speelveld.getChildren().contains(zwartePuchers.get(0))){
+                    pion = zwartePuchers.get(1);
+                }else{
+                    pion = zwartePuchers.get(0);
+                }
+            }
+        }else {
+            if (kleur.equals("wit")){
+                if (speelveld.getChildren().contains(wittePullers.get(0))){
+                    pion = wittePullers.get(1);
+                }else{
+                    pion = wittePullers.get(0);
+                }
+            }else{
+                if (speelveld.getChildren().contains(zwartePullers.get(0))){
+                    pion = zwartePullers.get(1);
+                }else{
+                    pion = zwartePullers.get(0);
+                }
+            }
+        }
         pion.setModel(this);
-        pion.initialize();
         veranderKleur();
         stappenlijst.add(new Stap(pion, xWaarde, yWaarde));
     }
@@ -154,5 +286,13 @@ public class SpelModel implements Observable {
         data[0] = witOver;
         data[1] = zwartOver;
         return data;
+    }
+
+    public int getPlaatsnu() {
+        return plaatsnu;
+    }
+
+    public ArrayList<Stap> getStappenlijst() {
+        return stappenlijst;
     }
 }

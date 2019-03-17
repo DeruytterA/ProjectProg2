@@ -12,8 +12,18 @@ public abstract class AlgemenePion extends ImageView{
         this.setFitHeight(70.0);
         this.setPickOnBounds(true);
         this.setPreserveRatio(true);
+        this.setFitHeight(75.0);
+        this.setFitWidth(75.0);
     }
 
+    public void opVeld(){
+        this.setFitHeight(150);
+        this.setFitWidth(150);
+    }
+    public void aanRand(){
+        this.setFitHeight(75.0);
+        this.setFitWidth(75.0);
+    }
 
     public void setModel(SpelModel model){
         this.model = model;

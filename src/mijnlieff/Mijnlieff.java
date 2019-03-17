@@ -21,6 +21,7 @@ public class Mijnlieff extends Application {
         primaryStage.setTitle("MijnLieff");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+        model.awakeListners();
 
     }
 
