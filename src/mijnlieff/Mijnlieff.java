@@ -1,4 +1,4 @@
-package Spel;
+package mijnlieff;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
-public class Main extends Application {
+public class Mijnlieff extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
