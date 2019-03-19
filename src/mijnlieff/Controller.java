@@ -6,11 +6,10 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Controller implements InvalidationListener {
 
@@ -21,7 +20,7 @@ public class Controller implements InvalidationListener {
 
     public GridPane grid;
     public BorderPane borderPane;
-    private VBox[] over;
+    private Map<String, VBox> over;
 
     private SpelModel model;
 
@@ -34,24 +33,17 @@ public class Controller implements InvalidationListener {
 
     public void invalidated(Observable var1){
         grid = model.getgrid();
-        ObservableList<Node> childrens = grid.getChildren();
-        for (Node child:childrens) {
-            if (child instanceof AlgemenePion) {
-                AlgemenePion hulp = (AlgemenePion) child;
-                hulp.setFitWidth(150.0);
-                hulp.setFitHeight(150.0);
-            }
-        }
+        System.out.println(grid.getChildren());
         over = model.getOver();
-        borderPane.setLeft(over[0]);
-        borderPane.setRight(over[1]);
-        BorderPane.setAlignment(over[0], Pos.CENTER);
-        BorderPane.setAlignment(over[1], Pos.CENTER);
+        System.out.println(over.get("wit").getChildren());
+        System.out.println(over.get("zwart").getChildren());
+        borderPane.setLeft(over.get("wit"));
+        borderPane.setRight(over.get("zwart"));
+        BorderPane.setAlignment(over.get("wit"), Pos.CENTER);
+        BorderPane.setAlignment(over.get("zwart"), Pos.CENTER);
+        over.get("wit").setAlignment(Pos.CENTER);
+        over.get("zwart").setAlignment(Pos.CENTER);
         checkButtons();
-    }
-
-    public GridPane getSpeelveld(){
-        return grid;
     }
 
     public void setModel(SpelModel model){
@@ -73,7 +65,7 @@ public class Controller implements InvalidationListener {
 
     public void checkButtons(){
         int plaats = model.getPlaatsnu();
-        ArrayList<Stap> stappenlijst = model.getStappenlijst();
+        ArrayList<AlgemenePion> stappenlijst = model.getStappenlijst();
         if (stappenlijst.size() == plaats){
             buttonForward.setDisable(true);
             buttonForwardAll.setDisable(true);

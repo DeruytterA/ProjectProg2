@@ -22,7 +22,6 @@ public class Mijnlieff extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
         model.awakeListners();
-
     }
 
     public static void main(String[] args) {
