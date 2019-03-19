@@ -20,10 +20,11 @@ public class Mijnlieff extends Application {
         new ServerController(parameters.get(0),parameters.get(1),model);
         primaryStage.setTitle("MijnLieff");
         primaryStage.setScene(new Scene(root));
-        primaryStage.show();
         model.awakeListners();
+        primaryStage.show();
         if (parameters.size() > 2){
-            TestModus testModus = new TestModus(model, parameters.get(2), primaryStage.getScene());
+            new TestModus(model, parameters.get(2), primaryStage.getScene());
+            primaryStage.close();
         }
     }
 
