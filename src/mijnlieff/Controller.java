@@ -18,9 +18,8 @@ public class Controller implements InvalidationListener {
     public Button buttonForward;
     public Button buttonForwardAll;
 
-    public GridPane grid;
+    private GridPane grid;
     public BorderPane borderPane;
-    private Map<String, VBox> over;
 
     private SpelModel model;
 
@@ -29,18 +28,14 @@ public class Controller implements InvalidationListener {
         //grid.setBackground(new Background(new BackgroundImage(new Image("mijnlieff/Photos/achtergrond.png"), BackgroundRepeat.SPACE, BackgroundRepeat.SPACE, BackgroundPosition.CENTER,new BackgroundSize(150,150,false,false,false,false))));
         buttonBack.setDisable(true);
         buttonBackAll.setDisable(true);
+        grid = (GridPane) borderPane.getCenter();
     }
 
     public void invalidated(Observable var1) {
+        grid = (GridPane) borderPane.getCenter();
         grid = model.getgrid();
-
-        System.out.println(grid.getChildren());
-
-        over = model.getOver();
-
-        System.out.println(over.get("wit").getChildren());
-        System.out.println(over.get("zwart").getChildren());
-
+        borderPane.setCenter(grid);
+        Map<String, VBox> over = model.getOver();
         borderPane.setLeft(over.get("wit"));
         borderPane.setRight(over.get("zwart"));
         BorderPane.setAlignment(over.get("wit"), Pos.CENTER);
@@ -89,4 +84,7 @@ public class Controller implements InvalidationListener {
         }
     }
 
+    public GridPane getGrid() {
+        return grid;
+    }
 }

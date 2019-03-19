@@ -3,7 +3,6 @@ package mijnlieff;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
-import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -28,7 +27,7 @@ public class SpelModel implements Observable {
 
 
     public SpelModel(Controller controller) {
-
+        speelveld = controller.getGrid();
         soortenPionnen = new Character[4];
         soortenPionnen[0] = '+';
         soortenPionnen[1] = 'X';
@@ -71,7 +70,6 @@ public class SpelModel implements Observable {
             put("zwart", new VBox());
         }};
 
-        speelveld = new GridPane();
         kleur = "wit";
         listeners = new ArrayList<>();
         stappenlijst = new ArrayList<>();
@@ -108,6 +106,7 @@ public class SpelModel implements Observable {
                     AlgemenePion pion = characterSupplierMap.get(character).get();
                     pion.setKleur(speler);
                     allePionnenMap.get(speler).get(character).add(pion);
+                    pion.initialize();
                 }
             }
         }

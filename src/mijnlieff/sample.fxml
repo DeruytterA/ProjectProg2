@@ -10,12 +10,12 @@
 
 <BorderPane fx:id="borderPane" prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mijnlieff.Controller">
    <center>
-      <GridPane fx:id="grid" gridLinesVisible="true" minHeight="600.0" minWidth="600.0">
+      <GridPane gridLinesVisible="true" minHeight="600.0" minWidth="600.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="150.0" prefHeight="150.0" vgrow="SOMETIMES" />
