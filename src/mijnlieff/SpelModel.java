@@ -83,7 +83,6 @@ public class SpelModel implements Observable {
 
         controller.setModel(this);
         addListener(controller);
-        awakeListners();
     }
 
 

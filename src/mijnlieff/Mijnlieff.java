@@ -17,11 +17,14 @@ public class Mijnlieff extends Application {
         Controller cont = loader.getController();
         List<String> parameters = getParameters().getRaw();
         SpelModel model = new SpelModel(cont);
-        ServerController server = new ServerController(parameters.get(0),parameters.get(1),model);
+        new ServerController(parameters.get(0),parameters.get(1),model);
         primaryStage.setTitle("MijnLieff");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
         model.awakeListners();
+        if (parameters.size() > 2){
+            TestModus testModus = new TestModus(model, parameters.get(2), primaryStage.getScene());
+        }
     }
 
     public static void main(String[] args) {

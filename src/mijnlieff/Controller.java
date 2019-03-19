@@ -25,18 +25,22 @@ public class Controller implements InvalidationListener {
     private SpelModel model;
 
 
-    public void initialize () {
+    public void initialize() {
         //grid.setBackground(new Background(new BackgroundImage(new Image("mijnlieff/Photos/achtergrond.png"), BackgroundRepeat.SPACE, BackgroundRepeat.SPACE, BackgroundPosition.CENTER,new BackgroundSize(150,150,false,false,false,false))));
         buttonBack.setDisable(true);
         buttonBackAll.setDisable(true);
     }
 
-    public void invalidated(Observable var1){
+    public void invalidated(Observable var1) {
         grid = model.getgrid();
+
         System.out.println(grid.getChildren());
+
         over = model.getOver();
+
         System.out.println(over.get("wit").getChildren());
         System.out.println(over.get("zwart").getChildren());
+
         borderPane.setLeft(over.get("wit"));
         borderPane.setRight(over.get("zwart"));
         BorderPane.setAlignment(over.get("wit"), Pos.CENTER);
@@ -46,48 +50,43 @@ public class Controller implements InvalidationListener {
         checkButtons();
     }
 
-    public void setModel(SpelModel model){
+    public void setModel(SpelModel model) {
         this.model = model;
     }
 
-    public void buttenBackAll(){
+    public void buttenBackAll() {
         model.backAll();
     }
-    public void buttonBack(){
+
+    public void buttonBack() {
         model.back();
     }
-    public void buttonForward(){
+
+    public void buttonForward() {
         model.forward();
     }
-    public void buttonForwardAll(){
+
+    public void buttonForwardAll() {
         model.forwardAll();
     }
 
-    public void checkButtons(){
+    public void checkButtons() {
         int plaats = model.getPlaatsnu();
         ArrayList<AlgemenePion> stappenlijst = model.getStappenlijst();
-        if (stappenlijst.size() == plaats){
+        if (stappenlijst.size() == plaats) {
             buttonForward.setDisable(true);
             buttonForwardAll.setDisable(true);
-        }else{
+        } else {
             buttonForward.setDisable(false);
             buttonForwardAll.setDisable(false);
         }
-        if (plaats == 0){
+        if (plaats == 0) {
             buttonBackAll.setDisable(true);
             buttonBack.setDisable(true);
-        }else{
+        } else {
             buttonBackAll.setDisable(false);
             buttonBack.setDisable(false);
         }
     }
-
-    /*
-      <VBox fx:id="witteBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="150.0" BorderPane.alignment="CENTER">
-         <children>
-         </children>
-      </VBox>
-     */
-
 
 }
