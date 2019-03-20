@@ -1,9 +1,10 @@
-package mijnlieff;
+package mijnlieff.Pionnen;
 
 import javafx.scene.image.ImageView;
+import mijnlieff.SpelModel;
 
 public abstract class AlgemenePion extends ImageView{
-
+    protected Boolean opVeld;
     protected SpelModel model;
     protected String kleur;
     protected int xwaarde;
@@ -31,10 +32,12 @@ public abstract class AlgemenePion extends ImageView{
 
 
     public void opVeld(){
-        this.setFitHeight(150);
-        this.setFitWidth(150);
+        opVeld = true;
     }
     public void aanRand(){
+        this.fitHeightProperty().unbind();
+        this.fitWidthProperty().unbind();
+        opVeld = false;
         this.setFitHeight(75.0);
         this.setFitWidth(75.0);
     }
@@ -52,4 +55,5 @@ public abstract class AlgemenePion extends ImageView{
     }
 
     public abstract void initialize();
+
 }

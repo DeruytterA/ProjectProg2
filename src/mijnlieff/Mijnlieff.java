@@ -16,7 +16,9 @@ public class Mijnlieff extends Application {
         Parent root = loader.load();
         Controller cont = loader.getController();
         List<String> parameters = getParameters().getRaw();
-        SpelModel model = new SpelModel(cont);
+        SpelModel model = new SpelModel();
+        cont.setModel(model);
+        model.addListener(cont);
         new ServerController(parameters.get(0),parameters.get(1),model);
         primaryStage.setTitle("MijnLieff");
         primaryStage.setScene(new Scene(root));

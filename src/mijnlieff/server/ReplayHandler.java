@@ -48,7 +48,8 @@ public class ReplayHandler implements Runnable {
                 "X F 2 2 o",
                 "X F 2 3 +",
                 "X F 3 3 X",
-                "X T 0 0 @"
+                "X F 0 0 @",
+                "X T 0 1 o"
         ));
     }
 

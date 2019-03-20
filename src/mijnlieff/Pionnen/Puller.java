@@ -1,4 +1,4 @@
-package mijnlieff;
+package mijnlieff.Pionnen;
 
 import javafx.scene.image.Image;
 

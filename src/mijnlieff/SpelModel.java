@@ -5,6 +5,7 @@ import javafx.beans.Observable;
 
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import mijnlieff.Pionnen.*;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -13,27 +14,26 @@ public class SpelModel implements Observable {
 
     private int plaatsnu;
 
-    private GridPane speelveld;
+    private Speelveld speelveld;
     private Character[] soortenPionnen;
     private String[] kleuren;
     private ArrayList<AlgemenePion> stappenlijst;
 
     private ArrayList<InvalidationListener> listeners;
 
-    private Map<String, VBox> overigePionnen;
+    private Map<String, ArrayList<AlgemenePion>> overigePionnen;
     private Map<String, Map<Character, ArrayList<AlgemenePion>>> allePionnenMap;
     private Map<Character, Supplier<AlgemenePion>> characterSupplierMap;
     private String kleur;
 
 
-    public SpelModel(Controller controller) {
-        speelveld = controller.getGrid();
+    public SpelModel() {
         soortenPionnen = new Character[4];
         soortenPionnen[0] = '+';
         soortenPionnen[1] = 'X';
         soortenPionnen[2] = 'o';
         soortenPionnen[3] = '@';
-
+        speelveld = new Speelveld(4, 4);
         allePionnenMap = new HashMap<>(){{
             put("zwart",
                     new HashMap<>(){{
@@ -66,8 +66,8 @@ public class SpelModel implements Observable {
 
 
         overigePionnen = new HashMap<>(){{
-            put("wit", new VBox());
-            put("zwart", new VBox());
+            put("wit", new ArrayList<>());
+            put("zwart", new ArrayList<>());
         }};
 
         kleur = "wit";
@@ -79,8 +79,6 @@ public class SpelModel implements Observable {
         vulZijkanten("wit");
         vulZijkanten("zwart");
 
-        controller.setModel(this);
-        addListener(controller);
     }
 
 
@@ -95,7 +93,6 @@ public class SpelModel implements Observable {
     public void awakeListners(){
         for (InvalidationListener listner:listeners) {
             listner.invalidated(this);
-
         }
     }
 
@@ -114,21 +111,25 @@ public class SpelModel implements Observable {
 
     public void vulZijkanten(String kleur){
         for (Character soort: soortenPionnen) {
-            overigePionnen.get(kleur).getChildren().addAll(allePionnenMap.get(kleur).get(soort));
+            overigePionnen.get(kleur).addAll(allePionnenMap.get(kleur).get(soort));
         }
     }
 
     public void voegToeAanGrid(){
         AlgemenePion pion = stappenlijst.get(plaatsnu - 1);
-        speelveld.add(pion, pion.getXwaarde(), pion.getYwaarde());
+        speelveld.add(pion);
         pion.opVeld();
-        overigePionnen.get(pion.getKleur()).getChildren().remove(pion);
+        overigePionnen.get(pion.getKleur()).remove(pion);
     }
 
     public void verwijderUitGrid(int plaats){
         AlgemenePion pion = stappenlijst.get(plaats);
-        speelveld.getChildren().remove(pion);
-        overigePionnen.get(pion.getKleur()).getChildren().add(pion);
+        speelveld.remove(pion);
+        AlgemenePion legePion = new LegePion();
+        legePion.setCoordinaten(pion.getXwaarde(), pion.getYwaarde());
+        speelveld.add(legePion);
+        legePion.initialize();
+        overigePionnen.get(pion.getKleur()).add(pion);
         pion.aanRand();
     }
 
@@ -137,7 +138,8 @@ public class SpelModel implements Observable {
         int xWaarde = Character.getNumericValue(line.charAt(4));
         int yWaarde = Character.getNumericValue(line.charAt(6));
         AlgemenePion pion;
-        if (stappenlijst.contains(allePionnenMap.get(kleur).get(type).get(0))){
+        ArrayList<AlgemenePion> pionLijst =  allePionnenMap.get(kleur).get(type);
+        if (stappenlijst.contains(pionLijst.get(0))){
             pion = allePionnenMap.get(kleur).get(type).get(1);
         }else{
             pion = allePionnenMap.get(kleur).get(type).get(0);
@@ -184,11 +186,11 @@ public class SpelModel implements Observable {
         awakeListners();
     }
 
-    public GridPane getgrid() {
+    public Speelveld getgrid() {
         return speelveld;
     }
 
-    public Map<String, VBox> getOver(){
+    public Map<String, ArrayList<AlgemenePion>> getOver(){
         return overigePionnen;
     }
 

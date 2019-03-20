@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
+<?import javafx.scene.layout.VBox?>
 <BorderPane fx:id="borderPane" prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mijnlieff.Controller">
    <center>
       <GridPane fx:id="grid" gridLinesVisible="true" minHeight="600.0" minWidth="600.0">
@@ -66,7 +67,11 @@
       </HBox>
    </bottom>
    <left>
+       <VBox fx:id="witteOver">
+       </VBox>
    </left>
    <right>
+       <VBox fx:id="zwarteOver">
+       </VBox>
    </right>
 </BorderPane>
