@@ -21,7 +21,7 @@ public class TestModus {
         try {
             ImageIO.write(bimg, "png", file);
         }catch (IOException ex){
-            throw new RuntimeException("fout bij het maken van de foto" + ex);
+            throw new RuntimeException("fout bij het maken van de foto " + ex);
         }
     }
 }
