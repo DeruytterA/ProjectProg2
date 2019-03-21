@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 <?import javafx.scene.layout.VBox?>
-<BorderPane fx:id="borderPane" prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mijnlieff.Controller">
+<BorderPane fx:id="borderPane" prefWidth="750" prefHeight="630" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mijnlieff.Controller">
    <center>
-      <GridPane fx:id="grid" gridLinesVisible="true" minHeight="600.0" minWidth="600.0">
+      <GridPane fx:id="grid" gridLinesVisible="true" minHeight="600.0" minWidth="600.0" prefHeight="600" prefWidth="600">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
@@ -67,11 +67,11 @@
       </HBox>
    </bottom>
    <left>
-       <VBox fx:id="witteOver">
+       <VBox fx:id="witteOver" prefWidth="75.0" minWidth="75.0" maxWidth="75.0">
        </VBox>
    </left>
    <right>
-       <VBox fx:id="zwarteOver">
+       <VBox fx:id="zwarteOver" prefWidth="75.0" minWidth="75.0" maxWidth="75.0">
        </VBox>
    </right>
 </BorderPane>

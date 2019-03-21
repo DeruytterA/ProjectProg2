@@ -5,9 +5,11 @@ import javafx.beans.Observable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
+
 import mijnlieff.Pionnen.AlgemenePion;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 
 public class Controller implements InvalidationListener {
@@ -27,6 +29,10 @@ public class Controller implements InvalidationListener {
 
     public void initialize() {
         //grid.setBackground(new Background(new BackgroundImage(new Image("mijnlieff/Photos/achtergrond.png"), BackgroundRepeat.SPACE, BackgroundRepeat.SPACE, BackgroundPosition.CENTER,new BackgroundSize(150,150,false,false,false,false))));
+        grid.maxHeightProperty().bindBidirectional(grid.maxWidthProperty());
+        grid.minHeightProperty().bindBidirectional(grid.minWidthProperty());
+        grid.maxHeightProperty().bindBidirectional(grid.minHeightProperty());
+        grid.minWidthProperty().bindBidirectional(grid.maxWidthProperty());
         buttonBack.setDisable(true);
         buttonBackAll.setDisable(true);
         BorderPane.setAlignment(grid, Pos.CENTER);
@@ -38,9 +44,7 @@ public class Controller implements InvalidationListener {
 
     public void invalidated(Observable var1) {
         updateGrid(model.getgrid());
-        Map<String, ArrayList<AlgemenePion>> over = model.getOver();
-        updateVboxen(over);
-        //TODO Vboxen instellen
+        updateVboxen(model.getOver());
         checkButtons();
     }
 
@@ -57,12 +61,12 @@ public class Controller implements InvalidationListener {
     }
 
     public void updateVboxen(Map<String , ArrayList<AlgemenePion>> over){
+        over.get("wit").sort(Comparator.comparing(o -> o.getClass().toString()));
+        over.get("zwart").sort(Comparator.comparing(o -> o.getClass().toString()));
         witteOver.getChildren().clear();
-        witteOver.getChildren().addAll(over.get("wit"));
         zwarteOver.getChildren().clear();
+        witteOver.getChildren().addAll(over.get("wit"));
         zwarteOver.getChildren().addAll(over.get("zwart"));
-        BorderPane.setAlignment(witteOver, Pos.CENTER);
-        BorderPane.setAlignment(zwarteOver, Pos.CENTER);
     }
 
     public void setModel(SpelModel model) {

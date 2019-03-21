@@ -17,7 +17,6 @@ public class Speelveld {
                 pion.initialize();
             }
         }
-        System.out.println(veld);
     }
 
     public void add(AlgemenePion pion){

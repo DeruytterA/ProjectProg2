@@ -21,7 +21,8 @@ public class Mijnlieff extends Application {
         model.addListener(cont);
         new ServerController(parameters.get(0),parameters.get(1),model);
         primaryStage.setTitle("MijnLieff");
-        primaryStage.setScene(new Scene(root));
+        //breedte, hoogte
+        primaryStage.setScene(new Scene(root, 900, 780));
         model.awakeListners();
         primaryStage.show();
         if (parameters.size() > 2){

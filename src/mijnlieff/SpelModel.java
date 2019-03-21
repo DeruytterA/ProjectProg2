@@ -3,8 +3,6 @@ package mijnlieff;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import mijnlieff.Pionnen.*;
 
 import java.util.*;
