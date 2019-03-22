@@ -89,9 +89,7 @@ public class SpelModel implements Observable {
     }
 
     public void awakeListners(){
-        for (InvalidationListener listner:listeners) {
-            listner.invalidated(this);
-        }
+        listeners.forEach(o -> o.invalidated(this) );
     }
 
     public void vulAllePionnen(){

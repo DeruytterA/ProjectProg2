@@ -13,7 +13,7 @@ public class Speelveld {
             for (int i = 0; i <veld[j].length ; i++) {
                 AlgemenePion pion = new LegePion();
                 veld[j][i] = pion;
-                pion.setCoordinaten(j,i);
+                pion.setCoordinaten(j, i);
                 pion.initialize();
             }
         }

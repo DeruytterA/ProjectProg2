@@ -2,9 +2,9 @@ package mijnlieff;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class ServerController {
+
 
     public ServerController(String server, String poort, SpelModel model) {
         try(Socket socket = new Socket(server, Integer.parseInt(poort));
@@ -19,10 +19,8 @@ public class ServerController {
                 inputlijn = serverIn.readLine();
             }
             model.parseStringToStap(inputlijn);
-        }catch (UnknownHostException ex){
+        }catch (Exception ex){
             throw new RuntimeException("UnknownHostException when making socket " + ex);
-        }catch (IOException ex){
-            throw new RuntimeException("IOException when making socket " + ex);
         }
     }
 }
