@@ -10,7 +10,6 @@ public class Toren extends AlgemenePion {
 
     @Override
     public void initialize() {
-        this.setImage(new Image("mijnlieff/Photos/" + kleur + "-toren.png"));
+        this.setImage(new Image("mijnlieff/Photos/" + kleur.toString().toLowerCase() + "-toren.png"));
     }
-
 }

@@ -10,6 +10,6 @@ public class Pusher extends AlgemenePion {
 
     @Override
     public void initialize() {
-        this.setImage(new Image("mijnlieff/Photos/" + kleur + "-pusher.png"));
+        this.setImage(new Image("mijnlieff/Photos/" + kleur.toString().toLowerCase() + "-pusher.png"));
     }
 }

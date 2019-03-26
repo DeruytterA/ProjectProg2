@@ -60,13 +60,13 @@ public class Controller implements InvalidationListener {
         }
     }
 
-    public void updateVboxen(Map<String , ArrayList<AlgemenePion>> over){
-        over.get("wit").sort(Comparator.comparing(o -> o.getClass().toString()));
-        over.get("zwart").sort(Comparator.comparing(o -> o.getClass().toString()));
+    public void updateVboxen(Map<SpelModel.Kleur, ArrayList<AlgemenePion>> over){
+        over.get(SpelModel.Kleur.WIT).sort(Comparator.comparing(o -> o.getClass().toString()));
+        over.get(SpelModel.Kleur.ZWART).sort(Comparator.comparing(o -> o.getClass().toString()));
         witteOver.getChildren().clear();
         zwarteOver.getChildren().clear();
-        witteOver.getChildren().addAll(over.get("wit"));
-        zwarteOver.getChildren().addAll(over.get("zwart"));
+        witteOver.getChildren().addAll(over.get(SpelModel.Kleur.WIT));
+        zwarteOver.getChildren().addAll(over.get(SpelModel.Kleur.ZWART));
     }
 
     public void setModel(SpelModel model) {

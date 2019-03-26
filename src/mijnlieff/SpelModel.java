@@ -9,21 +9,19 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public class SpelModel implements Observable {
-
     private int plaatsnu;
 
     private Speelveld speelveld;
     private Character[] soortenPionnen;
-    private String[] kleuren;
+    private Kleur[] kleuren;
     private ArrayList<AlgemenePion> stappenlijst;
 
     private ArrayList<InvalidationListener> listeners;
 
-    private Map<String, ArrayList<AlgemenePion>> overigePionnen;
-    private Map<String, Map<Character, ArrayList<AlgemenePion>>> allePionnenMap;
+    private Map<Kleur, ArrayList<AlgemenePion>> overigePionnen;
+    private Map<Kleur, Map<Character, ArrayList<AlgemenePion>>> allePionnenMap;
     private Map<Character, Supplier<AlgemenePion>> characterSupplierMap;
-    private String kleur;
-
+    private Kleur kleur;
 
     public SpelModel() {
         soortenPionnen = new Character[4];
@@ -33,7 +31,7 @@ public class SpelModel implements Observable {
         soortenPionnen[3] = '@';
         speelveld = new Speelveld(4, 4);
         allePionnenMap = new HashMap<>(){{
-            put("zwart",
+            put(Kleur.ZWART,
                     new HashMap<>(){{
                         put('o', new ArrayList<>());
                         put('X', new ArrayList<>());
@@ -41,7 +39,7 @@ public class SpelModel implements Observable {
                         put('+', new ArrayList<>());
                     }}
                     );
-            put("wit",
+            put(Kleur.WIT,
                     new HashMap<>(){{
                         put('o', new ArrayList<>());
                         put('X', new ArrayList<>());
@@ -58,27 +56,30 @@ public class SpelModel implements Observable {
             put('o', Puller::new);
         }};
 
-        kleuren = new String[2];
-        kleuren[0] = "wit";
-        kleuren[1] = "zwart";
+        kleuren = new Kleur[2];
+        kleuren[0] = Kleur.WIT;
+        kleuren[1] = Kleur.ZWART;
 
 
         overigePionnen = new HashMap<>(){{
-            put("wit", new ArrayList<>());
-            put("zwart", new ArrayList<>());
+            put(Kleur.WIT, new ArrayList<>());
+            put(Kleur.ZWART, new ArrayList<>());
         }};
 
-        kleur = "wit";
+        kleur = Kleur.WIT;
         listeners = new ArrayList<>();
         stappenlijst = new ArrayList<>();
         plaatsnu = 0;
 
         vulAllePionnen();
-        vulZijkanten("wit");
-        vulZijkanten("zwart");
+        vulZijkanten();
 
     }
 
+    public enum Kleur{
+        ZWART,
+        WIT
+    }
 
     public void addListener(InvalidationListener var1){
         listeners.add(var1);
@@ -93,7 +94,7 @@ public class SpelModel implements Observable {
     }
 
     public void vulAllePionnen(){
-        for (String speler:kleuren) {
+        for (Kleur speler:Kleur.values()) {
             for (Character character:soortenPionnen) {
                 for (int i = 0; i < 2 ; i++) {
                     AlgemenePion pion = characterSupplierMap.get(character).get();
@@ -105,9 +106,11 @@ public class SpelModel implements Observable {
         }
     }
 
-    public void vulZijkanten(String kleur){
-        for (Character soort: soortenPionnen) {
-            overigePionnen.get(kleur).addAll(allePionnenMap.get(kleur).get(soort));
+    public void vulZijkanten(){
+        for (Kleur kleur2:Kleur.values()) {
+            for (Character soort: soortenPionnen) {
+                overigePionnen.get(kleur2).addAll(allePionnenMap.get(kleur2).get(soort));
+            }
         }
     }
 
@@ -147,10 +150,10 @@ public class SpelModel implements Observable {
     }
 
     public void veranderKleur(){
-        if (kleur.equals("wit")){
-            kleur = "zwart";
+        if (kleur.equals(Kleur.WIT)){
+            kleur = Kleur.ZWART;
         }else{
-            kleur = "wit";
+            kleur = Kleur.WIT;
         }
     }
 
@@ -175,10 +178,10 @@ public class SpelModel implements Observable {
     }
 
     public void backAll(){
-        plaatsnu = 0;
-        for (int i=0; i< stappenlijst.size();i++){
-            verwijderUitGrid(i);
-        }
+       while(plaatsnu > 0){
+           plaatsnu--;
+           verwijderUitGrid(plaatsnu);
+       }
         awakeListners();
     }
 
@@ -186,7 +189,7 @@ public class SpelModel implements Observable {
         return speelveld;
     }
 
-    public Map<String, ArrayList<AlgemenePion>> getOver(){
+    public Map<Kleur, ArrayList<AlgemenePion>> getOver(){
         return overigePionnen;
     }
 

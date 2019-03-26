@@ -8,7 +8,7 @@ public class Loper extends AlgemenePion {
         super();
     }
     public void initialize(){
-        this.setImage(new Image("mijnlieff/Photos/" + kleur + "-loper.png"));
+        this.setImage(new Image("mijnlieff/Photos/" + kleur.toString().toLowerCase() + "-loper.png"));
     }
 
 }

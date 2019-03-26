@@ -10,6 +10,6 @@ public class Puller extends AlgemenePion {
 
     @Override
     public void initialize() {
-        this.setImage(new Image("mijnlieff/Photos/" + kleur + "-puller.png"));
+        this.setImage(new Image("mijnlieff/Photos/" + kleur.toString().toLowerCase() + "-puller.png"));
     }
 }

@@ -6,7 +6,7 @@ import mijnlieff.SpelModel;
 public abstract class AlgemenePion extends ImageView{
     protected Boolean opVeld;
     protected SpelModel model;
-    protected String kleur;
+    protected SpelModel.Kleur kleur;
     protected int xwaarde;
     protected int ywaarde;
 
@@ -16,6 +16,7 @@ public abstract class AlgemenePion extends ImageView{
         this.setPreserveRatio(true);
         aanRand();
     }
+
 
     public int getXwaarde() {
         return xwaarde;
@@ -46,11 +47,11 @@ public abstract class AlgemenePion extends ImageView{
         this.model = model;
     }
 
-    public void setKleur(String kleur){
+    public void setKleur(SpelModel.Kleur kleur){
         this.kleur = kleur;
     }
 
-    public String getKleur() {
+    public SpelModel.Kleur getKleur() {
         return kleur;
     }
 
