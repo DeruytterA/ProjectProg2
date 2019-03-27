@@ -76,10 +76,6 @@ public class SpelModel implements Observable {
 
     }
 
-    public enum Kleur{
-        ZWART,
-        WIT
-    }
 
     public void addListener(InvalidationListener var1){
         listeners.add(var1);

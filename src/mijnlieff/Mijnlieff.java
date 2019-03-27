@@ -12,7 +12,7 @@ public class Mijnlieff extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Interactief.fxml"));
         Parent root = loader.load();
         Controller cont = loader.getController();
         List<String> parameters = getParameters().getRaw();

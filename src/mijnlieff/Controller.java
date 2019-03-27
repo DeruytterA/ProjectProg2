@@ -28,7 +28,6 @@ public class Controller implements InvalidationListener {
 
 
     public void initialize() {
-        //grid.setBackground(new Background(new BackgroundImage(new Image("mijnlieff/Photos/achtergrond.png"), BackgroundRepeat.SPACE, BackgroundRepeat.SPACE, BackgroundPosition.CENTER,new BackgroundSize(150,150,false,false,false,false))));
         grid.maxHeightProperty().bindBidirectional(grid.maxWidthProperty());
         grid.minHeightProperty().bindBidirectional(grid.minWidthProperty());
         grid.maxHeightProperty().bindBidirectional(grid.minHeightProperty());
@@ -60,13 +59,13 @@ public class Controller implements InvalidationListener {
         }
     }
 
-    public void updateVboxen(Map<SpelModel.Kleur, ArrayList<AlgemenePion>> over){
-        over.get(SpelModel.Kleur.WIT).sort(Comparator.comparing(o -> o.getClass().toString()));
-        over.get(SpelModel.Kleur.ZWART).sort(Comparator.comparing(o -> o.getClass().toString()));
+    public void updateVboxen(Map<Kleur, ArrayList<AlgemenePion>> over){
+        over.get(Kleur.WIT).sort(Comparator.comparing(o -> o.getClass().toString()));
+        over.get(Kleur.ZWART).sort(Comparator.comparing(o -> o.getClass().toString()));
         witteOver.getChildren().clear();
         zwarteOver.getChildren().clear();
-        witteOver.getChildren().addAll(over.get(SpelModel.Kleur.WIT));
-        zwarteOver.getChildren().addAll(over.get(SpelModel.Kleur.ZWART));
+        witteOver.getChildren().addAll(over.get(Kleur.WIT));
+        zwarteOver.getChildren().addAll(over.get(Kleur.ZWART));
     }
 
     public void setModel(SpelModel model) {
@@ -106,9 +105,5 @@ public class Controller implements InvalidationListener {
             buttonBackAll.setDisable(false);
             buttonBack.setDisable(false);
         }
-    }
-
-    public GridPane getGrid(){
-        return grid;
     }
 }

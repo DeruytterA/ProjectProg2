@@ -1,12 +1,13 @@
 package mijnlieff.Pionnen;
 
 import javafx.scene.image.ImageView;
+import mijnlieff.Kleur;
 import mijnlieff.SpelModel;
 
 public abstract class AlgemenePion extends ImageView{
     protected Boolean opVeld;
     protected SpelModel model;
-    protected SpelModel.Kleur kleur;
+    protected Kleur kleur;
     protected int xwaarde;
     protected int ywaarde;
 
@@ -47,11 +48,11 @@ public abstract class AlgemenePion extends ImageView{
         this.model = model;
     }
 
-    public void setKleur(SpelModel.Kleur kleur){
+    public void setKleur(Kleur kleur){
         this.kleur = kleur;
     }
 
-    public SpelModel.Kleur getKleur() {
+    public Kleur getKleur() {
         return kleur;
     }
 
