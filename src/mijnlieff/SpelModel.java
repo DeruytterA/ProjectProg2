@@ -24,6 +24,9 @@ public class SpelModel implements Observable {
     private Kleur kleur;
 
     public SpelModel() {
+        //TODO server aanmaken in MODEL
+        //TODO server oproepen in juiste modus
+        //TODO Modus meegeven aan model
         soortenPionnen = new Character[4];
         soortenPionnen[0] = '+';
         soortenPionnen[1] = 'X';

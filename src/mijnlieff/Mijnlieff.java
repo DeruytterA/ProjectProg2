@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -12,6 +13,10 @@ public class Mijnlieff extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        //TODO aanpassen voor niewe fxml
+        //TODO optie voor geen parameters toevoegen
+        //TODO server aanmaken in MODEL
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Interactief.fxml"));
         Parent root = loader.load();
         Controller cont = loader.getController();
