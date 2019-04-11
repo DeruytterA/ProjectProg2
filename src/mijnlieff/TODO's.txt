@@ -10,3 +10,8 @@ dit is dus alles wat in alle classen staat:
     6) Het scherm maken om andere spelers te kiezen
     7) Het toevoegen van regels waar bepaalde pionnen geplaatst mogen worden
 Hopelijk finished...
+//TODO Alles wat kan in apparte thread laten lopen
+
+//TODO misschien nog animaties toevoegen met timeliness
+setcancel button zorgt ervoor dat elke keer dat esc ingedrukt wordt de button "aangeroepen wordt"
+

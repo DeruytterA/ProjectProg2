@@ -1,18 +1,19 @@
-package mijnlieff;
+package mijnlieff.CompanionClasses.Controllers;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 
-import mijnlieff.Pionnen.AlgemenePion;
+import mijnlieff.Kleur;
+import mijnlieff.Pionnen.Pion;
+import mijnlieff.Model.Speelveld;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
 
-public class Controller implements InvalidationListener {
+public class InteractiefCompanion extends MyController {
 
     public Button buttonBack;
     public Button buttonBackAll;
@@ -24,7 +25,6 @@ public class Controller implements InvalidationListener {
     public GridPane grid;
     public BorderPane borderPane;
 
-    private SpelModel model;
 
 
     public void initialize() {
@@ -49,7 +49,7 @@ public class Controller implements InvalidationListener {
 
     public void updateGrid(Speelveld veld){
         grid.getChildren().clear();
-        AlgemenePion[][] arrayVeld = veld.getVeld();
+        Pion[][] arrayVeld = veld.getVeld();
         for (int i = 0; i < arrayVeld.length; i++) {
             for (int j = 0; j < arrayVeld[0].length; j++) {
                 arrayVeld[i][j].fitWidthProperty().bind(grid.widthProperty().divide(4));
@@ -59,7 +59,7 @@ public class Controller implements InvalidationListener {
         }
     }
 
-    public void updateVboxen(Map<Kleur, ArrayList<AlgemenePion>> over){
+    public void updateVboxen(Map<Kleur, ArrayList<Pion>> over){
         over.get(Kleur.WIT).sort(Comparator.comparing(o -> o.getClass().toString()));
         over.get(Kleur.ZWART).sort(Comparator.comparing(o -> o.getClass().toString()));
         witteOver.getChildren().clear();
@@ -68,11 +68,7 @@ public class Controller implements InvalidationListener {
         zwarteOver.getChildren().addAll(over.get(Kleur.ZWART));
     }
 
-    public void setModel(SpelModel model) {
-        this.model = model;
-    }
-
-    public void buttenBackAll() {
+    public void buttonBackAll() {
         model.backAll();
     }
 
@@ -89,16 +85,14 @@ public class Controller implements InvalidationListener {
     }
 
     public void checkButtons() {
-        int plaats = model.getPlaatsnu();
-        ArrayList<AlgemenePion> stappenlijst = model.getStappenlijst();
-        if (stappenlijst.size() == plaats) {
+        if (model.getAantalStappen() == model.getPlaatsnu()) {
             buttonForward.setDisable(true);
             buttonForwardAll.setDisable(true);
         } else {
             buttonForward.setDisable(false);
             buttonForwardAll.setDisable(false);
         }
-        if (plaats == 0) {
+        if (model.getPlaatsnu() == 0) {
             buttonBackAll.setDisable(true);
             buttonBack.setDisable(true);
         } else {

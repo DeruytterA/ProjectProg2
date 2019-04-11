@@ -1,32 +1,40 @@
-package mijnlieff;
+package mijnlieff.Model;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
+import mijnlieff.Kleur;
 import mijnlieff.Pionnen.*;
+import mijnlieff.CompanionClasses.Controllers.ServerController;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
 
 public class SpelModel implements Observable {
+    private boolean nickname;
+    private boolean serverAan;
     private int plaatsnu;
 
     private Speelveld speelveld;
     private Character[] soortenPionnen;
     private Kleur[] kleuren;
-    private ArrayList<AlgemenePion> stappenlijst;
+    private ArrayList<Pion> stappenlijst;
 
     private ArrayList<InvalidationListener> listeners;
 
-    private Map<Kleur, ArrayList<AlgemenePion>> overigePionnen;
-    private Map<Kleur, Map<Character, ArrayList<AlgemenePion>>> allePionnenMap;
-    private Map<Character, Supplier<AlgemenePion>> characterSupplierMap;
+    private Map<Kleur, ArrayList<Pion>> overigePionnen;
+    private Map<Kleur, Map<Character, ArrayList<Pion>>> allePionnenMap;
+    private Map<Character, Supplier<Pion>> characterSupplierMap;
     private Kleur kleur;
 
+    public SpelModel(String serverNaam, String poort){
+        this();
+        startServer(serverNaam, poort);
+        ServerController.interactief();
+    }
+
     public SpelModel() {
-        //TODO server aanmaken in MODEL
-        //TODO server oproepen in juiste modus
-        //TODO Modus meegeven aan model
         soortenPionnen = new Character[4];
         soortenPionnen[0] = '+';
         soortenPionnen[1] = 'X';
@@ -96,7 +104,7 @@ public class SpelModel implements Observable {
         for (Kleur speler:Kleur.values()) {
             for (Character character:soortenPionnen) {
                 for (int i = 0; i < 2 ; i++) {
-                    AlgemenePion pion = characterSupplierMap.get(character).get();
+                    Pion pion = characterSupplierMap.get(character).get();
                     pion.setKleur(speler);
                     allePionnenMap.get(speler).get(character).add(pion);
                     pion.initialize();
@@ -114,16 +122,16 @@ public class SpelModel implements Observable {
     }
 
     public void voegToeAanGrid(){
-        AlgemenePion pion = stappenlijst.get(plaatsnu - 1);
+        Pion pion = stappenlijst.get(plaatsnu - 1);
         speelveld.add(pion);
         pion.opVeld();
         overigePionnen.get(pion.getKleur()).remove(pion);
     }
 
-    public void verwijderUitGrid(int plaats){
-        AlgemenePion pion = stappenlijst.get(plaats);
+    public void verwijderUitGrid(){
+        Pion pion = stappenlijst.get(plaatsnu);
         speelveld.remove(pion);
-        AlgemenePion legePion = new LegePion();
+        Pion legePion = new LegePion();
         legePion.setCoordinaten(pion.getXwaarde(), pion.getYwaarde());
         speelveld.add(legePion);
         legePion.initialize();
@@ -135,8 +143,8 @@ public class SpelModel implements Observable {
         char type = line.charAt(8);
         int xWaarde = Character.getNumericValue(line.charAt(4));
         int yWaarde = Character.getNumericValue(line.charAt(6));
-        AlgemenePion pion;
-        ArrayList<AlgemenePion> pionLijst =  allePionnenMap.get(kleur).get(type);
+        Pion pion;
+        ArrayList<Pion> pionLijst =  allePionnenMap.get(kleur).get(type);
         if (stappenlijst.contains(pionLijst.get(0))){
             pion = allePionnenMap.get(kleur).get(type).get(1);
         }else{
@@ -172,15 +180,33 @@ public class SpelModel implements Observable {
 
     public void back(){
         plaatsnu--;
-        verwijderUitGrid(plaatsnu);
+        verwijderUitGrid();
         awakeListners();
     }
 
     public void backAll(){
        while(plaatsnu > 0){
            plaatsnu--;
-           verwijderUitGrid(plaatsnu);
+           verwijderUitGrid();
        }
+        awakeListners();
+    }
+
+    public boolean getServeraan(){
+        return serverAan;
+    }
+
+    public void setServerAan(boolean serverAan) {
+        this.serverAan = serverAan;
+        awakeListners();
+    }
+
+    public boolean getNickname(){
+        return nickname;
+    }
+
+    public void setNickname(boolean nickname){
+        this.nickname = nickname;
         awakeListners();
     }
 
@@ -188,7 +214,7 @@ public class SpelModel implements Observable {
         return speelveld;
     }
 
-    public Map<Kleur, ArrayList<AlgemenePion>> getOver(){
+    public Map<Kleur, ArrayList<Pion>> getOver(){
         return overigePionnen;
     }
 
@@ -196,7 +222,13 @@ public class SpelModel implements Observable {
         return plaatsnu;
     }
 
-    public ArrayList<AlgemenePion> getStappenlijst() {
-        return stappenlijst;
+    public int getAantalStappen() {
+        return stappenlijst.size();
+    }
+
+    public void startServer(String serverNaam, String poort){
+        new ServerController(serverNaam, poort);
+        ServerController.setModel(this);
+        ServerController.Startmatchmaking();
     }
 }

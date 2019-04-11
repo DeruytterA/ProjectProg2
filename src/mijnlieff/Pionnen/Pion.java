@@ -2,16 +2,16 @@ package mijnlieff.Pionnen;
 
 import javafx.scene.image.ImageView;
 import mijnlieff.Kleur;
-import mijnlieff.SpelModel;
+import mijnlieff.Model.SpelModel;
 
-public abstract class AlgemenePion extends ImageView{
+public abstract class Pion extends ImageView{
     protected Boolean opVeld;
     protected SpelModel model;
     protected Kleur kleur;
     protected int xwaarde;
     protected int ywaarde;
 
-    public AlgemenePion() {
+    public Pion() {
         super();
         this.setPickOnBounds(true);
         this.setPreserveRatio(true);
@@ -36,6 +36,7 @@ public abstract class AlgemenePion extends ImageView{
     public void opVeld(){
         opVeld = true;
     }
+
     public void aanRand(){
         this.fitHeightProperty().unbind();
         this.fitWidthProperty().unbind();

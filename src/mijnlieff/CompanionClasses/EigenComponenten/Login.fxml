@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<?import java.net.URL?>
+<fx:root fx:id="vbox" alignment="CENTER" prefHeight="412.0" prefWidth="572.0" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" >
+   <stylesheets>
+      <URL value="@invalid.css"/>
+   </stylesheets>
+   <children>
+      <Label text="LoginScreen">
+         <VBox.margin>
+            <Insets bottom="50.0" />
+         </VBox.margin>
+         <font>
+            <Font size="31.0" />
+         </font></Label>
+      <Label text="Naam van de server" />
+      <TextField fx:id="serverNaamTextField">
+         <VBox.margin>
+            <Insets left="250.0" right="250.0" />
+         </VBox.margin>
+      </TextField>
+      <Label text="Poort van de Server" />
+      <TextField fx:id="serverPoortTextField">
+         <VBox.margin>
+            <Insets left="250.0" right="250.0" />
+         </VBox.margin>
+      </TextField>
+      <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginPressed" text="Login" />
+   </children>
+</fx:root>

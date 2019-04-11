@@ -2,7 +2,7 @@ package mijnlieff.Pionnen;
 
 import javafx.scene.image.Image;
 
-public class Loper extends AlgemenePion {
+public class Loper extends Pion {
 
     public Loper(){
         super();

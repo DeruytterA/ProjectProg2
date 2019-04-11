@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<?import java.net.URL?>
+<BorderPane styleClass="header-section" fx:id="borderPane" prefHeight="630.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mijnlieff.CompanionClasses.Controllers.AlgemeenMatchmakingCompanion">
+   <stylesheets>
+      <URL value="@Algemeen.css"/>
+   </stylesheets>
+   <top>
+      <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="750.0" BorderPane.alignment="CENTER">
+         <children>
+         </children>
+      </HBox>
+   </top>
+   <center>
+   </center>
+   <right>
+   </right>
+   <bottom>
+   </bottom>
+</BorderPane>

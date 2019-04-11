@@ -2,7 +2,7 @@ package mijnlieff.Pionnen;
 
 import javafx.scene.image.Image;
 
-public class Pusher extends AlgemenePion {
+public class Pusher extends Pion {
 
     public Pusher(){
         super();

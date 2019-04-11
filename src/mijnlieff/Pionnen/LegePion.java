@@ -2,7 +2,7 @@ package mijnlieff.Pionnen;
 
 import javafx.scene.image.Image;
 
-public class LegePion extends AlgemenePion{
+public class LegePion extends Pion {
 
     public LegePion() {
         super();

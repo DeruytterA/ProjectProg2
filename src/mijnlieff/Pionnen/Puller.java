@@ -2,7 +2,7 @@ package mijnlieff.Pionnen;
 
 import javafx.scene.image.Image;
 
-public class Puller extends AlgemenePion {
+public class Puller extends Pion {
 
     public Puller(){
         super();
