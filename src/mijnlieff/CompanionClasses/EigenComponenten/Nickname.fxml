@@ -13,7 +13,7 @@
         <URL value="@invalid.css"/>
     </stylesheets>
     <children>
-      <Label text="Label">
+      <Label text="Nickname">
           <VBox.margin>
               <Insets bottom="50.0" />
           </VBox.margin>
@@ -23,7 +23,7 @@
       </Label>
       <TextField fx:id="nicknameTextfield">
           <VBox.margin>
-              <Insets left="250.0" right="250.0" />
+              <Insets left="250.0" right="250.0" bottom="20.0"/>
           </VBox.margin>
       </TextField>
       <Button mnemonicParsing="false" text="Check Availability" fx:id="nickNameButton" onAction="#checkPressed" />

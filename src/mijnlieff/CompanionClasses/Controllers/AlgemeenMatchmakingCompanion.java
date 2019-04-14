@@ -7,7 +7,6 @@ import mijnlieff.CompanionClasses.EigenComponenten.Login;
 import mijnlieff.CompanionClasses.EigenComponenten.MatchmakingTabel;
 import mijnlieff.CompanionClasses.EigenComponenten.Nickname;
 import mijnlieff.Model.SpelModel;
-import mijnlieff.SpelStadium;
 
 
 public class AlgemeenMatchmakingCompanion extends MyController {
@@ -23,8 +22,6 @@ public class AlgemeenMatchmakingCompanion extends MyController {
         stadium = SpelStadium.Login;
         loginScreen = new Login();
         borderPane.setCenter(loginScreen);
-        tabelScreen = new MatchmakingTabel();
-        nicknameScreen = new Nickname();
     }
 
     @Override
@@ -33,39 +30,68 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             checkServer();
         }else if (stadium.equals(SpelStadium.Nickname)){
             checkNickname();
+        }else if (stadium.equals(SpelStadium.Tabel)){
+            checkTabel();
         }
     }
 
+    public void checkTabel(){
+        if (model.isspelStart()) {
+            if (model.isEerste()) {
+                //TODO maak een kiezer van spelbord
+            } else {
+                //TODO luister voor spelbord van tegenstander + zandloper (Task)
+            }
+        }else{
+            showAlert("Speler niet meer beschikbaar", "Deze speler is jammer genoeg niet meer beschikbaar de tabel wordt ge refresht en kies aub een andere");
+        }
+    }
+
+    private void showAlert(String header, String context){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText(header);
+        alert.setContentText(context);
+        alert.showAndWait();
+    }
+
     public void checkNickname(){
-        if (model.getNickname()){
+        if (model.getNicknamebool()){
+            tabelScreen = new MatchmakingTabel();
+            tabelScreen.setModel(model);
             borderPane.setCenter(tabelScreen);
             stadium = SpelStadium.Tabel;
-        }else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Nickname in use");
-            alert.setContentText("The nickname you chose is allready in use please try another one.");
-            alert.showAndWait();
+            //TODO verwijder nicknamescreen als listner in model
+        }else if (!nicknameScreen.getTextField().equals("")){
+            showAlert("Nickname in use", "The nickname you chose is already in use please try another one.");
         }
     }
 
     public void checkServer(){
         if (model.getServeraan()){
+            nicknameScreen = new Nickname();
+            nicknameScreen.setModel(model);
             borderPane.setCenter(nicknameScreen);
             stadium = SpelStadium.Nickname;
         }else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Server not found");
-            alert.setContentText("The server you entered was not found please enter a valid adress and try again.");
-            alert.showAndWait();
+            showAlert("Server not found", "The server you entered was not found please enter a valid adress and try again.");
         }
     }
 
     @Override
     public void setModel(SpelModel model){
         this.model = model;
-        model.addListener(this);
         loginScreen.setModel(model);
-        tabelScreen.setModel(model);
+        model.addListener(this);
     }
+
+    public enum SpelStadium {
+        Login,
+        Nickname,
+        Tabel,
+        SpelBordKiezer,
+        Spelbord,
+        Einde
+    }
+
 
 }

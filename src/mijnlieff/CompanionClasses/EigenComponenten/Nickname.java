@@ -3,6 +3,7 @@ package mijnlieff.CompanionClasses.EigenComponenten;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import mijnlieff.CompanionClasses.Controllers.NicknameCompanion;
+import mijnlieff.Model.SpelModel;
 
 import java.io.IOException;
 
@@ -23,5 +24,13 @@ public class Nickname extends VBox {
         }catch (IOException ex){
             throw new RuntimeException("Er is iets fout gegaan bij het inladen van de FXML van Login " + ex);
         }
+    }
+
+    public String getTextField(){
+        return companion.getTextField();
+    }
+
+    public void setModel(SpelModel model){
+        companion.setModel(model);
     }
 }

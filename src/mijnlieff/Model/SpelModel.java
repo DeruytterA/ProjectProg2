@@ -7,14 +7,20 @@ import mijnlieff.Kleur;
 import mijnlieff.Pionnen.*;
 import mijnlieff.CompanionClasses.Controllers.ServerController;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
 
 public class SpelModel implements Observable {
+
+    private boolean heeftTegenstander;
+    private boolean eerste;
     private boolean nickname;
     private boolean serverAan;
+    private boolean spelStartBool;
     private int plaatsnu;
+    private boolean inLijst;
+    private String nicknameString;
+    private String tegenstander;
 
     private Speelveld speelveld;
     private Character[] soortenPionnen;
@@ -32,6 +38,7 @@ public class SpelModel implements Observable {
         this();
         startServer(serverNaam, poort);
         ServerController.interactief();
+        awakeListners();
     }
 
     public SpelModel() {
@@ -84,9 +91,7 @@ public class SpelModel implements Observable {
 
         vulAllePionnen();
         vulZijkanten();
-
     }
-
 
     public void addListener(InvalidationListener var1){
         listeners.add(var1);
@@ -97,7 +102,7 @@ public class SpelModel implements Observable {
     }
 
     public void awakeListners(){
-        listeners.forEach(o -> o.invalidated(this) );
+        listeners.forEach(o -> o.invalidated(this));
     }
 
     public void vulAllePionnen(){
@@ -201,11 +206,16 @@ public class SpelModel implements Observable {
         awakeListners();
     }
 
-    public boolean getNickname(){
+    public boolean getNicknamebool(){
         return nickname;
     }
 
-    public void setNickname(boolean nickname){
+    public void setNickname(String nickname){
+        nicknameString = nickname;
+        ServerController.nickname(nickname);
+    }
+
+    public void setNicknamebool(boolean nickname){
         this.nickname = nickname;
         awakeListners();
     }
@@ -230,5 +240,38 @@ public class SpelModel implements Observable {
         new ServerController(serverNaam, poort);
         ServerController.setModel(this);
         ServerController.Startmatchmaking();
+    }
+
+    public boolean isInLijst() {
+        return inLijst;
+    }
+
+    public void setInLijst(boolean var) {
+        if (var != inLijst){
+            inLijst = var;
+            if (var){
+                ServerController.plaatsInlijst();
+            }else {
+                ServerController.haalUitLijst();
+            }
+            awakeListners();
+        }
+    }
+
+    public boolean isspelStart(){
+        return spelStartBool;
+    }
+
+    public void setSpelStartBool(boolean spelStartBool){
+        this.spelStartBool = spelStartBool;
+    }
+
+    public boolean isEerste() {
+        return eerste;
+    }
+
+    public void setEerste(boolean eerste) {
+        this.eerste = eerste;
+        awakeListners();
     }
 }

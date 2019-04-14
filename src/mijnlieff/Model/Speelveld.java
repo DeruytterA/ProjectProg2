@@ -6,6 +6,24 @@ import mijnlieff.Pionnen.LegePion;
 public class Speelveld {
 
     private Pion[][] veld;
+    private Coordinaat[] bordconfiguratie;
+
+    public class Coordinaat{
+        private int x;
+        private int y;
+
+        public Coordinaat(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+
+        public Integer[] getcoordinaat(){
+            Integer[] output = new Integer[2];
+            output[0] = x;
+            output[1] = y;
+            return output;
+        }
+    }
 
     public Speelveld(int xAs, int yAs) {
         veld = new Pion[xAs][yAs];

@@ -20,13 +20,16 @@ public class MatchmakingTabel extends VBox {
             companion = new MatchmakingTabelCompanion();
             loader.setController(companion);
             loader.load();
-        }catch (IOException ex){//TODO hier error bij matchmaking
+        }catch (IOException ex){
             throw new RuntimeException("Er is iets fout gegaan bij het inladen van de FXML van MatchmakingTabel " + ex);
         }
     }
-    //TODO wat moet dit object nog kunnen
 
     public void setModel(SpelModel model){
         companion.setModel(model);
+    }
+
+    public MatchmakingTabelCompanion getCompanion(){
+        return companion;
     }
 }
