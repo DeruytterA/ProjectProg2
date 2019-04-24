@@ -7,8 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import mijnlieff.CompanionClasses.Controllers.MyController;
 import mijnlieff.CompanionClasses.Controllers.ServerController;
-import mijnlieff.Model.SpelModel;
-import mijnlieff.server2.Server;
+import mijnlieff.Model.Model;
 
 import java.util.List;
 
@@ -18,20 +17,20 @@ public class Mijnlieff extends Application {
     public void start(Stage primaryStage)throws Exception{
         List<String> parameters = getParameters().getRaw();
         if(parameters.size() > 0) {
-            SpelModel model = new SpelModel(parameters.get(0), parameters.get(1));
-            loadFile(primaryStage, model, "/mijnlieff/CompanionClasses/Controllers/FxmlEnCssFiles/Interactief.fxml");
+            Model model = new Model(parameters.get(0), parameters.get(1), false);
+            loadFile(primaryStage, model, "/mijnlieff/CompanionClasses/EigenComponenten/InteractiefHbox.fxml");
             if (parameters.size() > 2){ //start testModus
                 new TestModus(model, parameters.get(2), primaryStage.getScene());
                 primaryStage.close();
             }
         }else {//Start matchmaking
-            SpelModel model = new SpelModel();
+            Model model = new Model(true);
             loadFile(primaryStage, model, "/mijnlieff/CompanionClasses/Controllers/FxmlEnCssFiles/AlgemeenMatchmaking.fxml");
             ServerController.setModel(model);
         }
     }
 
-    private void loadFile(Stage primaryStage, SpelModel model, String fxmlFile) throws Exception{
+    private void loadFile(Stage primaryStage, Model model, String fxmlFile) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
         Parent root = loader.load();
         MyController cont = loader.getController();

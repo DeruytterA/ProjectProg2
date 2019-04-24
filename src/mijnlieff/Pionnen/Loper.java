@@ -4,8 +4,8 @@ import javafx.scene.image.Image;
 
 public class Loper extends Pion {
 
-    public Loper(){
-        super();
+    public Loper(boolean matchmaking){
+        super(matchmaking);
     }
 
     public void initialize(){

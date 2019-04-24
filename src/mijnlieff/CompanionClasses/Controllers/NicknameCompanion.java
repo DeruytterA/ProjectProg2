@@ -31,7 +31,7 @@ public class NicknameCompanion extends MyController {
 
     //Onaction button
     public void checkPressed(){
-        model.setNickname(nicknameTextfield.getText());
+        model.serverNickname(nicknameTextfield.getText());
     }
 
     public String getTextField(){

@@ -1,6 +1,8 @@
 package mijnlieff.CompanionClasses.Controllers;
 
 import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -12,9 +14,11 @@ public class LoginCompanion extends MyController{
     public TextField serverPoortTextField;
     public Button loginButton;
 
-    private Boolean valid;
+    private BooleanProperty buttonDisabled;
 
     public void initialize(){
+        buttonDisabled = new SimpleBooleanProperty();
+        buttonDisabled.setValue(true);
         TextField[] textFields = new TextField[] {
             serverNaamTextField, serverPoortTextField
         };
@@ -22,7 +26,7 @@ public class LoginCompanion extends MyController{
         for (TextField field : textFields) {
             field.textProperty().addListener(o -> checkValues());
         }
-        loginButton.setDisable(true);
+        loginButton.disableProperty().bind(buttonDisabled);
     }
 
     public void invalidated(Observable var1) {}
@@ -35,13 +39,9 @@ public class LoginCompanion extends MyController{
         return serverPoortTextField.getText();
     }
 
-    public Boolean getValid(){
-        return valid;
-    }
 
-    public void setValid(boolean valid) {
-        this.valid = valid;
-        if (valid) {
+    public void setValid() {
+        if (buttonDisabled.get()) {
             vbox.getStyleClass().removeAll("invalid");
         } else {
             vbox.getStyleClass().add("invalid");
@@ -54,11 +54,11 @@ public class LoginCompanion extends MyController{
 
     public void checkValues(){
         if (!isNumeric(serverPoortTextField.getText()) || serverNaamTextField.getText().equals("")){
-            setValid(false);
-            loginButton.setDisable(true);
+            buttonDisabled.setValue(true);
+            setValid();
         }else {
-            setValid(true);
-            loginButton.setDisable(false);
+            buttonDisabled.setValue(false);
+            setValid();
         }
     }
 

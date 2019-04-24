@@ -1,15 +1,11 @@
 //TODO's
 dit is dus alles wat in alle classen staat:
-    1) Alle server methoden in orde maken Met throwen van exceptions. Zoals: Tegenstander is ge quit, naam is niet beschikbaar en je kan niet uit de lijst speler heeft jou juist gekozen
     2) Een modulair spelbord maken dat een een extentie is van Gridpane en zijn eigen fxml bestand heeft met "root" met een constructor die rijen en kolommen meekrijgen
         + dat spelbord ook al Vboxen geven voor gemak.
         + dat spelbord ook al de coordinaten van de gebruikte locaties meegeven
-    3) Main method aanpassen zodat 0 argumenten geaccepteerd worden en dat het juiste scherm wordt opgestart
-    4) Het scherm maken om te verbinden met de server
-    5) Het scherm maken om een userName te kiezen
-    6) Het scherm maken om andere spelers te kiezen
     7) Het toevoegen van regels waar bepaalde pionnen geplaatst mogen worden
 Hopelijk finished...
+
 //TODO Alles wat kan in apparte thread laten lopen
 
 //TODO misschien nog animaties toevoegen met timeliness

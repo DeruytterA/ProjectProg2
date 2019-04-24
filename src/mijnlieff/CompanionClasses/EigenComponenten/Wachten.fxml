@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<fx:root fx:id="vBox" alignment="TOP_CENTER" prefHeight="412.0" prefWidth="572.0" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="textLabel" text="Wachten op tegenstander">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="556.0" fitWidth="434.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="/mijnlieff/Photos/giphy (1).gif" />
+         </image>
+      </ImageView>
+   </children>
+</fx:root>

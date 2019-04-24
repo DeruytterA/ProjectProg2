@@ -1,16 +1,18 @@
 package mijnlieff.CompanionClasses.Controllers;
 
 import javafx.collections.ObservableList;
-import mijnlieff.Model.SpelModel;
+import javafx.concurrent.Task;
+import mijnlieff.Model.Model;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.ExecutionException;
 
 public class ServerController {
 
     private static String server;
     private static int poort;
-    private static SpelModel model;
+    private static Model model;
     private static Socket socket;
     private static BufferedReader serverIn;
     private static PrintWriter serverOut;
@@ -20,8 +22,8 @@ public class ServerController {
         server = serverNaam;
     }
 
-    public static void setModel(SpelModel var1){
-        model = var1;
+    public static void setModel(Model modell){
+        model = modell;
     }
 
 
@@ -39,7 +41,6 @@ public class ServerController {
         }catch (IOException ex){
             model.setServerAan(false);
         }
-
     }
 
     public static void interactief(){
@@ -64,25 +65,16 @@ public class ServerController {
     private static String receive(){
         String string;
         try {
-            string  = serverIn.readLine();
+            string = serverIn.readLine();
+            System.out.println(string);
         }catch (IOException ex){
             throw new RuntimeException("Er is iets misgegaan bij het lezen van de server " + ex);
         }
-        if (string.length() == 1 && string.charAt(0) == 'Q'){
+        if (string == null || (string.length() == 1 && string.charAt(0) == 'Q')){
             //TODO quit when server gets Q
             return null;
         }else{
             return string;
-        }
-    }
-
-    public static void nickname(String naam){
-        serverOut.println("I " + naam);
-        String string = receive();
-        if (string.equals("+")){
-            model.setNicknamebool(true);
-        }else {
-            model.setNicknamebool(false);
         }
     }
 
@@ -97,7 +89,19 @@ public class ServerController {
         }
     }
 
-    public static ObservableList<String> getOponents(ObservableList<String> lijst){
+    public static void nickname(String naam){
+        serverOut.println("I " + naam);
+        String string = receive();
+        if (string.equals("+")){
+            model.setNicknamebool(true);
+            model.setNickname(naam);
+        }else {
+            model.setNicknamebool(false);
+            model.setNickname(null);
+        }
+    }
+
+    public static void getOponents(ObservableList<String> lijst){
         lijst.clear();
         serverOut.println("W");
         String lijn = receive();
@@ -105,14 +109,48 @@ public class ServerController {
             lijst.add(lijn.substring(2));
             lijn = receive();
         }
-        return lijst;
     }
 
-    //TODO Fase1 zichzelf in lijst plaatsen (P sturen) (+ <T/F> <naam> als gekozen) CONNECTIE NAAR FASE 2
     public static void plaatsInlijst(){
         serverOut.println("P");
         model.setInLijst(true);
-        //TODO wachten tot naam gekozen
+        Task<String> task = new Task<String>() {
+            @Override
+            protected String call() {
+                return wachtOpAntwoord();
+            }
+        };
+        task.setOnSucceeded(e -> {
+            try {
+                parseTegenstander(task.get());
+            }catch (ExecutionException | InterruptedException ex){
+                throw new RuntimeException("er is iets misgegaan bij het opvragen van de string van de task " + ex);
+            }
+        });
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    private static void parseTegenstander(String input){
+        if (input.length() == 1 && input.charAt(0) == '-'){
+            model.setSpelStartBool(false);
+        }else {
+            if (input.charAt(2) == 'T'){
+                model.setEerste(true);
+            }else {
+                model.setEerste(false);
+            }
+            model.setSpelStartBool(true);
+            model.setTegenstander(input.substring(4));
+        }
+    }
+
+    public static String wachtOpAntwoord(){
+        String lijn = receive();
+        while (lijn == null){
+            lijn = receive();
+        }
+        return lijn;
     }
 
     //TODO Fase1 terug trekken uit lijst (R sturen) (+ (als gelukt)) (? anders)
@@ -128,22 +166,38 @@ public class ServerController {
         }
     }
 
-    //TODO Fase1 speler kiezen uit de lijst ( C <naam> sturen) (- terug (als speler al uit lijst)) | (+ <T/F> <naam> als gekozen)
-    public static String kiesSpeler(String naam){
-        serverOut.println("C " + naam);
-        String input = receive();
-        if (input.length() == 1 && input.charAt(0) == '-'){
-            model.setSpelStartBool(false);
-            return  null;
-        }else {
-            model.setSpelStartBool(true);
-            if (input.charAt(2) == 'T'){
-                model.setEerste(true);
-            }else {
-                model.setEerste(false);
-            }
-            return input;
-        }
+    public static void parseSpelbord(String lijn){
+        model.setSpeelveld(lijn);
     }
 
+    public static void stuurSpelbord(String string){
+        String output = "X " + string;
+        serverOut.println(output);
+        parseSpelbord(output);
+    }
+
+    public static void ontvangSpelbord(){
+        Task<String> task = new Task<String>() {
+            @Override
+            protected String call() throws Exception {
+                return wachtOpAntwoord();
+            }
+        };
+        task.setOnSucceeded(e -> {
+            try {
+                parseSpelbord(task.get());
+            }catch (ExecutionException | InterruptedException ex){
+                throw new RuntimeException("er is iets misgegaan bij het opvragen van de string van de task " + ex);
+            }
+        });
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    //TODO Fase1 speler kiezen uit de lijst ( C <naam> sturen) (- terug (als speler al uit lijst)) | (+ <T/F> <naam> als gekozen)
+    public static void kiesSpeler(String naam){
+        serverOut.println("C " + naam);
+        String input = receive();
+        parseTegenstander(input);
+    }
 }

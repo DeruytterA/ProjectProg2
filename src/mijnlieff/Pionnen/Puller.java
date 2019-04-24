@@ -4,8 +4,8 @@ import javafx.scene.image.Image;
 
 public class Puller extends Pion {
 
-    public Puller(){
-        super();
+    public Puller(boolean matchmaking){
+        super(matchmaking);
     }
 
     @Override

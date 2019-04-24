@@ -3,7 +3,7 @@ package mijnlieff.CompanionClasses.EigenComponenten;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import mijnlieff.CompanionClasses.Controllers.LoginCompanion;
-import mijnlieff.Model.SpelModel;
+import mijnlieff.Model.Model;
 
 import java.io.IOException;
 
@@ -32,12 +32,8 @@ public class Login extends VBox {
         return arr ;
     }
 
-    public void setModel(SpelModel model){
+    public void setModel(Model model){
         companion.setModel(model);
-    }
-
-    public Boolean getValid(){
-        return companion.getValid();
     }
 
 }

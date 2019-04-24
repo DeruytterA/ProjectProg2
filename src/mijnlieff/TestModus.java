@@ -8,11 +8,11 @@ import java.io.File;
 import java.io.IOException;
 
 import javafx.embed.swing.SwingFXUtils;
-import mijnlieff.Model.SpelModel;
+import mijnlieff.Model.Model;
 
 public class TestModus {
 
-    public TestModus(SpelModel model, String bestand, Scene scene) {
+    public TestModus(Model model, String bestand, Scene scene) {
         model.forwardAll();
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(scene.snapshot(new WritableImage((int) scene.getWidth(), (int) scene.getHeight())),

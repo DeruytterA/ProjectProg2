@@ -4,8 +4,8 @@ import javafx.scene.image.Image;
 
 public class Pusher extends Pion {
 
-    public Pusher(){
-        super();
+    public Pusher(boolean matchmaking){
+        super(matchmaking);
     }
 
     @Override

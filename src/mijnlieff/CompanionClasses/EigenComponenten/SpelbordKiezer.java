@@ -2,35 +2,30 @@ package mijnlieff.CompanionClasses.EigenComponenten;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
-import mijnlieff.CompanionClasses.Controllers.NicknameCompanion;
+import mijnlieff.CompanionClasses.Controllers.SpelbordkiezerCompanion;
 import mijnlieff.Model.Model;
-
 import java.io.IOException;
 
-public class Nickname extends VBox {
+public class SpelbordKiezer extends VBox {
 
-    private NicknameCompanion companion;
+    private SpelbordkiezerCompanion companion;
 
-    public Nickname(){
-        super();
+    public SpelbordKiezer(){
         try {
             FXMLLoader loader = new FXMLLoader(
                     Login.class.getResource(
-                            "Nickname.fxml"));
+                            "SpelbordKiezer.fxml"));
             loader.setRoot(this);
-            this.companion = new NicknameCompanion();
+            this.companion = new SpelbordkiezerCompanion();
             loader.setController(companion);
             loader.load();
         }catch (IOException ex){
-            throw new RuntimeException("Er is iets fout gegaan bij het inladen van de FXML van Login " + ex);
+            throw new RuntimeException("Er is iets fout gegaan bij het inladen van de FXML van Spelbordkiezer " + ex);
         }
-    }
-
-    public String getTextField(){
-        return companion.getTextField();
     }
 
     public void setModel(Model model){
         companion.setModel(model);
     }
+
 }

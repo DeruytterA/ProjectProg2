@@ -1,17 +1,11 @@
 package mijnlieff.CompanionClasses.Controllers;
 
 import javafx.beans.Observable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 
-import mijnlieff.Kleur;
-import mijnlieff.Pionnen.Pion;
-import mijnlieff.Model.Speelveld;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Map;
+import mijnlieff.CompanionClasses.EigenComponenten.InteractiefHbox;
+import mijnlieff.Model.SpeelveldModel;
 
 public class InteractiefCompanion extends MyController {
 
@@ -20,53 +14,22 @@ public class InteractiefCompanion extends MyController {
     public Button buttonForward;
     public Button buttonForwardAll;
 
-    public VBox witteOver;
-    public VBox zwarteOver;
-    public GridPane grid;
     public BorderPane borderPane;
 
-
+    private SpeelveldModel model;
+    private InteractiefHbox hbox;
 
     public void initialize() {
-        grid.maxHeightProperty().bindBidirectional(grid.maxWidthProperty());
-        grid.minHeightProperty().bindBidirectional(grid.minWidthProperty());
-        grid.maxHeightProperty().bindBidirectional(grid.minHeightProperty());
-        grid.minWidthProperty().bindBidirectional(grid.maxWidthProperty());
         buttonBack.setDisable(true);
         buttonBackAll.setDisable(true);
-        BorderPane.setAlignment(grid, Pos.CENTER);
-        witteOver.setAlignment(Pos.CENTER);
-        zwarteOver.setAlignment(Pos.CENTER);
-        BorderPane.setAlignment(witteOver, Pos.CENTER);
-        BorderPane.setAlignment(zwarteOver, Pos.CENTER);
+        hbox = new InteractiefHbox(this);
+        borderPane.setBottom(hbox);
     }
 
     public void invalidated(Observable var1) {
-        updateGrid(model.getgrid());
-        updateVboxen(model.getOver());
         checkButtons();
     }
 
-    public void updateGrid(Speelveld veld){
-        grid.getChildren().clear();
-        Pion[][] arrayVeld = veld.getVeld();
-        for (int i = 0; i < arrayVeld.length; i++) {
-            for (int j = 0; j < arrayVeld[0].length; j++) {
-                arrayVeld[i][j].fitWidthProperty().bind(grid.widthProperty().divide(4));
-                arrayVeld[i][j].fitHeightProperty().bind(grid.heightProperty().divide(4));
-                grid.add(arrayVeld[i][j], j, i);
-            }
-        }
-    }
-
-    public void updateVboxen(Map<Kleur, ArrayList<Pion>> over){
-        over.get(Kleur.WIT).sort(Comparator.comparing(o -> o.getClass().toString()));
-        over.get(Kleur.ZWART).sort(Comparator.comparing(o -> o.getClass().toString()));
-        witteOver.getChildren().clear();
-        zwarteOver.getChildren().clear();
-        witteOver.getChildren().addAll(over.get(Kleur.WIT));
-        zwarteOver.getChildren().addAll(over.get(Kleur.ZWART));
-    }
 
     public void buttonBackAll() {
         model.backAll();

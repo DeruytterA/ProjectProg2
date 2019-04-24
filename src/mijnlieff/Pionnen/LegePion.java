@@ -4,8 +4,8 @@ import javafx.scene.image.Image;
 
 public class LegePion extends Pion {
 
-    public LegePion() {
-        super();
+    public LegePion(boolean matchmaking) {
+        super(matchmaking);
     }
 
     @Override
@@ -17,4 +17,5 @@ public class LegePion extends Pion {
         }
         opVeld();
     }
+
 }

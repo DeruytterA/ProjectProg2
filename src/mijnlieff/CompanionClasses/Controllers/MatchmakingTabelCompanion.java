@@ -3,21 +3,27 @@ package mijnlieff.CompanionClasses.Controllers;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
-import mijnlieff.CompanionClasses.EigenComponenten.PlayerListViewCell;
 
 
 public class MatchmakingTabelCompanion extends MyController {
 
     private ObservableList<String> spelersLijst;
 
-    public VBox vbox;
-    public ListView spelersLijstView;
-    public Button verwijderUitLijst;
-    public Button voegtoeAanlijst;
-    public Button kiesSpeler;
+    @FXML
+    private VBox vbox;
+    @FXML
+    private ListView spelersLijstView;
+    @FXML
+    private Button verwijderUitLijst;
+    @FXML
+    private Button voegtoeAanlijst;
+    @FXML
+    private Button kiesSpeler;
 
     public MatchmakingTabelCompanion(){
         spelersLijst = FXCollections.observableArrayList();
@@ -27,7 +33,15 @@ public class MatchmakingTabelCompanion extends MyController {
     public void initialize(){
         verwijderUitLijst.setDisable(true);
         spelersLijstView.setItems(spelersLijst);
-        spelersLijstView.setCellFactory(playerListView -> new PlayerListViewCell());
+        spelersLijstView.setCellFactory(playerListView -> new ListCell<String>(){
+
+            @Override
+            protected void updateItem(String string, boolean empty){
+                super.updateItem(string, empty);
+                setText(string);
+            }
+
+        });
     }
 
     public void invalidated(Observable observable){
@@ -44,20 +58,18 @@ public class MatchmakingTabelCompanion extends MyController {
 
     public void verwijderUitLijst(){
         //todo stop met wachten tot gekozen
-        model.setInLijst(false);
+        model.serverUitLijst();
     }
 
     public void voegToeAanlijst(){
-        //todo wachten tot gekozen
-        model.setInLijst(true);
+        model.serverInlijst();
     }
 
     public void kiesSpeler(){
-        ServerController.kiesSpeler( (String) spelersLijstView.getSelectionModel().getSelectedItem());
+        model.kiesSpeler((String) spelersLijstView.getSelectionModel().getSelectedItem());
     }
 
     public void doRefreshList(){
         ServerController.getOponents(spelersLijst);
     }
-
 }

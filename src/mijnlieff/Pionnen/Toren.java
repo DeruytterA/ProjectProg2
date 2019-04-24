@@ -4,8 +4,8 @@ import javafx.scene.image.Image;
 
 public class Toren extends Pion {
 
-    public Toren(){
-        super();
+    public Toren(boolean matchmaking){
+        super(matchmaking);
     }
 
     @Override

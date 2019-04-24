@@ -4,27 +4,34 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="borderPane" prefHeight="630.0" prefWidth="750.0" styleClass="header-section" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mijnlieff.CompanionClasses.Controllers.AlgemeenMatchmakingCompanion">
-   <stylesheets>
-      <URL value="@Algemeen.css" />
-   </stylesheets>
-   <top>
-      <HBox alignment="CENTER" prefHeight="29.0" prefWidth="750.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label alignment="CENTER" text="MijnLieff">
-               <font>
-                  <Font name="DejaVu Sans Bold" size="40.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-   </top>
-   <center>
-   </center>
-   <right>
-   </right>
-   <bottom>
-   </bottom>
+    <stylesheets>
+        <URL value="@Algemeen.css" />
+    </stylesheets>
+    <top>
+        <VBox fx:id="vbox" alignment="CENTER" prefHeight="29.0" prefWidth="750.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label alignment="CENTER" text="MijnLieff">
+                    <font>
+                        <Font name="DejaVu Sans Bold" size="40.0" />
+                    </font>
+                </Label>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="tegenstanderLabel" text="Jouw tegenstander is: " />
+                  <Label fx:id="nicknameLabel" text="Jouw nickname is: " />
+               </children>
+            </HBox>
+            </children>
+        </VBox>
+    </top>
+    <center>
+    </center>
+    <right>
+    </right>
+    <bottom>
+    </bottom>
 </BorderPane>
