@@ -9,10 +9,11 @@ import java.io.IOException;
 
 import javafx.embed.swing.SwingFXUtils;
 import mijnlieff.Model.Model;
+import mijnlieff.Model.SpeelveldModel;
 
 public class TestModus {
 
-    public TestModus(Model model, String bestand, Scene scene) {
+    public TestModus(SpeelveldModel model, String bestand, Scene scene) {
         model.forwardAll();
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(scene.snapshot(new WritableImage((int) scene.getWidth(), (int) scene.getHeight())),

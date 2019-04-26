@@ -4,7 +4,7 @@ import javafx.beans.Observable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 
-import mijnlieff.CompanionClasses.EigenComponenten.InteractiefHbox;
+import mijnlieff.CompanionClasses.EigenComponenten.SpelBord;
 import mijnlieff.Model.SpeelveldModel;
 
 public class InteractiefCompanion extends MyController {
@@ -17,13 +17,19 @@ public class InteractiefCompanion extends MyController {
     public BorderPane borderPane;
 
     private SpeelveldModel model;
-    private InteractiefHbox hbox;
+    private SpelBord spelBord;
+
+    public InteractiefCompanion(SpeelveldModel model){
+        this.model = model;
+        model.addListener(this);
+    }
 
     public void initialize() {
         buttonBack.setDisable(true);
         buttonBackAll.setDisable(true);
-        hbox = new InteractiefHbox(this);
-        borderPane.setBottom(hbox);
+        spelBord = new SpelBord(model);
+        borderPane.setCenter(spelBord);
+        spelBord.invalidate();
     }
 
     public void invalidated(Observable var1) {

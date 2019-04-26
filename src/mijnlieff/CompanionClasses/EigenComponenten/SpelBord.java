@@ -11,9 +11,11 @@ import java.io.IOException;
 public class SpelBord extends BorderPane {
 
     private SpelbordCompanion companion;
+    private SpeelveldModel model;
 
     public SpelBord(SpeelveldModel model){
         super();
+        this.model = model;
         try {
             FXMLLoader loader = new FXMLLoader(
                     Login.class.getResource(
@@ -25,6 +27,10 @@ public class SpelBord extends BorderPane {
         }catch (IOException ex){
             throw new RuntimeException("Er is iets fout gegaan bij het inladen van de FXML van Spelbord " + ex);
         }
+    }
+
+    public void invalidate(){
+        companion.invalidated(model);
     }
 }
 

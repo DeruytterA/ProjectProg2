@@ -29,7 +29,9 @@ public class LoginCompanion extends MyController{
         loginButton.disableProperty().bind(buttonDisabled);
     }
 
-    public void invalidated(Observable var1) {}
+    public void invalidated(Observable var1) {
+
+    }
 
     public String getServerNaam() {
         return serverNaamTextField.getText();
@@ -41,7 +43,7 @@ public class LoginCompanion extends MyController{
 
 
     public void setValid() {
-        if (buttonDisabled.get()) {
+        if (!buttonDisabled.get()) {
             vbox.getStyleClass().removeAll("invalid");
         } else {
             vbox.getStyleClass().add("invalid");

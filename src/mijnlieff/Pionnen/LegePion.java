@@ -18,4 +18,9 @@ public class LegePion extends Pion {
         opVeld();
     }
 
+    @Override
+    public boolean checkCoordinates(int x, int y){
+        return true;//TODO
+    }
+
 }

@@ -11,13 +11,13 @@ public class MatchmakingTabel extends VBox {
 
     private MatchmakingTabelCompanion companion;
 
-    public MatchmakingTabel(){
+    public MatchmakingTabel(Model model){
         try {
             FXMLLoader loader = new FXMLLoader(
                     MatchmakingTabel.class.getResource(
                             "MatchmakingTabel.fxml"));
             loader.setRoot(this);
-            companion = new MatchmakingTabelCompanion();
+            companion = new MatchmakingTabelCompanion(model);
             loader.setController(companion);
             loader.load();
         }catch (IOException ex){

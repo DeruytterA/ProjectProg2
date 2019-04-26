@@ -3,6 +3,7 @@ package mijnlieff.CompanionClasses.Controllers;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import mijnlieff.Model.Model;
+import mijnlieff.Model.SpeelveldModel;
 
 import java.io.*;
 import java.net.Socket;
@@ -10,20 +11,29 @@ import java.util.concurrent.ExecutionException;
 
 public class ServerController {
 
-    private static String server;
-    private static int poort;
-    private static Model model;
-    private static Socket socket;
-    private static BufferedReader serverIn;
-    private static PrintWriter serverOut;
+    private String server;
+    private int poort;
+    private Model model;
+    private SpeelveldModel spelbordModel;
+    private Socket socket;
+    private BufferedReader serverIn;
+    private PrintWriter serverOut;
+    private Task<String> wachtOpkiezen;
+    private Task<String> ontvangZet;
 
     public ServerController(String serverNaam, String poortNummer) {
         poort = Integer.parseInt(poortNummer);
         server = serverNaam;
     }
 
-    public static void setModel(Model modell){
+    public ServerController(){}
+
+    public void setModel(Model modell){
         model = modell;
+    }
+
+    public void setSpeelveldModel(SpeelveldModel speelveldModel1){
+        spelbordModel = speelveldModel1;
     }
 
 
@@ -32,7 +42,7 @@ public class ServerController {
     //TODO Toevoegen van Alerts als connection niet werkt
 
 
-    public static void Startmatchmaking(){
+    public void Startmatchmaking(){
         try {
             socket = new Socket(server, poort);
             serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -43,7 +53,7 @@ public class ServerController {
         }
     }
 
-    public static void interactief(){
+    public void interactief(){
         try(Socket socketInteracief = new Socket(server, poort);
             BufferedReader serverInteractiefIn = new BufferedReader(new InputStreamReader(socketInteracief.getInputStream()));
             PrintWriter serverInteractiefOut = new PrintWriter(socketInteracief.getOutputStream(), true)
@@ -51,18 +61,41 @@ public class ServerController {
             serverInteractiefOut.println("X");
             String inputlijn = serverInteractiefIn.readLine();
             while (inputlijn.charAt(2) != 'T'){
-                model.parseStringToStap(inputlijn);
+                spelbordModel.parseStringToStap(inputlijn);
                 serverInteractiefOut.println("X");
                 inputlijn = serverInteractiefIn.readLine();
             }
-            model.parseStringToStap(inputlijn);
-            model.setServerAan(true);
-        }catch (Exception ex){
+            spelbordModel.parseStringToStap(inputlijn);
+        }catch (IOException ex){
             throw new RuntimeException("UnknownHostException when making socket in interactief modus " + ex);
         }
     }
 
-    private static String receive(){
+    public void StuurZet(String zet){
+        serverOut.println(zet);
+    }
+
+    public void ontvangZet(){
+        ontvangZet = new Task<>() {
+            @Override
+            protected String call() {
+                return wachtOpAntwoord();
+            }
+        };
+        ontvangZet.setOnSucceeded(o -> {
+            try {
+                parseZet(ontvangZet.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void parseZet(String string){
+        spelbordModel.add(spelbordModel.parseStringToPion(string));
+    }
+
+    private String receive(){
         String string;
         try {
             string = serverIn.readLine();
@@ -78,7 +111,7 @@ public class ServerController {
         }
     }
 
-    public static void close(){
+    public void close(){
         if (serverOut != null) {
             serverOut.println("Q");
             try {
@@ -89,9 +122,10 @@ public class ServerController {
         }
     }
 
-    public static void nickname(String naam){
+    public void nickname(String naam){
         serverOut.println("I " + naam);
         String string = receive();
+        System.out.println(string);
         if (string.equals("+")){
             model.setNicknamebool(true);
             model.setNickname(naam);
@@ -101,7 +135,7 @@ public class ServerController {
         }
     }
 
-    public static void getOponents(ObservableList<String> lijst){
+    public void getOpponents(ObservableList<String> lijst){
         lijst.clear();
         serverOut.println("W");
         String lijn = receive();
@@ -111,27 +145,35 @@ public class ServerController {
         }
     }
 
-    public static void plaatsInlijst(){
-        serverOut.println("P");
-        model.setInLijst(true);
-        Task<String> task = new Task<String>() {
+    public void wachtOpTegenstander(){
+        wachtOpkiezen = new Task<>() {
             @Override
             protected String call() {
-                return wachtOpAntwoord();
+                String lijn = receive();
+                while (lijn == null && !this.isCancelled()){
+                    lijn = receive();
+                }
+                return lijn;
             }
         };
-        task.setOnSucceeded(e -> {
+        wachtOpkiezen.setOnSucceeded(e -> {
             try {
-                parseTegenstander(task.get());
+                parseTegenstander(wachtOpkiezen.get());
             }catch (ExecutionException | InterruptedException ex){
                 throw new RuntimeException("er is iets misgegaan bij het opvragen van de string van de task " + ex);
             }
         });
-        Thread thread = new Thread(task);
+        Thread thread = new Thread(wachtOpkiezen);
         thread.start();
     }
 
-    private static void parseTegenstander(String input){
+    public void plaatsInlijst(){
+        serverOut.println("P");
+        model.setInLijst(true);
+        wachtOpTegenstander();
+    }
+
+    private void parseTegenstander(String input){
         if (input.length() == 1 && input.charAt(0) == '-'){
             model.setSpelStartBool(false);
         }else {
@@ -145,7 +187,7 @@ public class ServerController {
         }
     }
 
-    public static String wachtOpAntwoord(){
+    public String wachtOpAntwoord(){
         String lijn = receive();
         while (lijn == null){
             lijn = receive();
@@ -154,29 +196,26 @@ public class ServerController {
     }
 
     //TODO Fase1 terug trekken uit lijst (R sturen) (+ (als gelukt)) (? anders)
-    public static boolean haalUitLijst(){
+    public void haalUitLijst(){
         serverOut.println("R");
         String string = receive();
         if (string.equals("+")){
             model.setInLijst(false);
-            return true;
-        }else {
-            model.setInLijst(true);
-            return false;
         }
+        wachtOpkiezen.cancel(true);
     }
 
-    public static void parseSpelbord(String lijn){
-        model.setSpeelveld(lijn);
+    public void parseSpelbord(String lijn){
+        model.setSpelBordString(lijn);
     }
 
-    public static void stuurSpelbord(String string){
+    public void stuurSpelbord(String string){
         String output = "X " + string;
         serverOut.println(output);
         parseSpelbord(output);
     }
 
-    public static void ontvangSpelbord(){
+    public void ontvangSpelbord(){
         Task<String> task = new Task<String>() {
             @Override
             protected String call() throws Exception {
@@ -195,9 +234,10 @@ public class ServerController {
     }
 
     //TODO Fase1 speler kiezen uit de lijst ( C <naam> sturen) (- terug (als speler al uit lijst)) | (+ <T/F> <naam> als gekozen)
-    public static void kiesSpeler(String naam){
+    public void kiesSpeler(String naam){
         serverOut.println("C " + naam);
         String input = receive();
         parseTegenstander(input);
     }
+
 }

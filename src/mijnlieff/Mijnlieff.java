@@ -5,43 +5,50 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import mijnlieff.CompanionClasses.Controllers.AlgemeenMatchmakingCompanion;
+import mijnlieff.CompanionClasses.Controllers.InteractiefCompanion;
 import mijnlieff.CompanionClasses.Controllers.MyController;
 import mijnlieff.CompanionClasses.Controllers.ServerController;
 import mijnlieff.Model.Model;
+import mijnlieff.Model.SpeelveldModel;
 
 import java.util.List;
 
 public class Mijnlieff extends Application {
 
+    private Model model;
+
     @Override
     public void start(Stage primaryStage)throws Exception{
         List<String> parameters = getParameters().getRaw();
         if(parameters.size() > 0) {
-            Model model = new Model(parameters.get(0), parameters.get(1), false);
-            loadFile(primaryStage, model, "/mijnlieff/CompanionClasses/EigenComponenten/InteractiefHbox.fxml");
+            ServerController server = new ServerController(parameters.get(0), parameters.get(1));
+            server.interactief();
+            SpeelveldModel spelbordModel = new SpeelveldModel(0,0,0,2,2,0,2,2, false,server);
+            InteractiefCompanion companion = new InteractiefCompanion(spelbordModel);
+            loadFile(primaryStage, "/mijnlieff/CompanionClasses/Controllers/FxmlEnCssFiles/Interactief.fxml", companion);
             if (parameters.size() > 2){ //start testModus
-                new TestModus(model, parameters.get(2), primaryStage.getScene());
+                new TestModus(spelbordModel, parameters.get(2), primaryStage.getScene());
                 primaryStage.close();
             }
         }else {//Start matchmaking
-            Model model = new Model(true);
-            loadFile(primaryStage, model, "/mijnlieff/CompanionClasses/Controllers/FxmlEnCssFiles/AlgemeenMatchmaking.fxml");
-            ServerController.setModel(model);
+            model = new Model();
+            MyController controller = new AlgemeenMatchmakingCompanion(model);
+            loadFile(primaryStage, "/mijnlieff/CompanionClasses/Controllers/FxmlEnCssFiles/AlgemeenMatchmaking.fxml", controller);
         }
     }
 
-    private void loadFile(Stage primaryStage, Model model, String fxmlFile) throws Exception{
+    private void loadFile(Stage primaryStage, String fxmlFile, MyController controller) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+        loader.setController(controller);
         Parent root = loader.load();
-        MyController cont = loader.getController();
-        cont.setModel(model);
         primaryStage.setTitle("MijnLieff");
         primaryStage.setScene(new Scene(root, 900, 780)); //breedte, hoogte
         primaryStage.show();
     }
 
     public void stop(){
-        ServerController.close();
+        //TODO
     }
 
     public static void main(String[] args) {

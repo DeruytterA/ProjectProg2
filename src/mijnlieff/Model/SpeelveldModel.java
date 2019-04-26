@@ -2,6 +2,7 @@ package mijnlieff.Model;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import mijnlieff.CompanionClasses.Controllers.ServerController;
 import mijnlieff.Kleur;
 import mijnlieff.Pionnen.*;
 
@@ -70,15 +71,19 @@ public class SpeelveldModel implements Observable {
         }
     }
 
-    public SpeelveldModel(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, boolean matchmaking) {
+    public SpeelveldModel(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, boolean matchmaking, ServerController server) {
+
         this.matchmaking = matchmaking;
         listeners = new ArrayList<>();
+        kleur = Kleur.WIT;
         bordconfiguratie = new Coordinaat[]{
                 new Coordinaat(x1, y1),
                 new Coordinaat(x2, y2),
                 new Coordinaat(x3, y3),
                 new Coordinaat(x4, y4)
         };
+
+        stappenlijst = new ArrayList<>();
 
         overigePionnen = new HashMap<>(){{
             put(Kleur.WIT, new ArrayList<>());
@@ -129,6 +134,7 @@ public class SpeelveldModel implements Observable {
         }
         vulAllePionnen();
         vulZijkanten();
+        plaatsnu = 0;
         awakeListners();
     }
 
@@ -171,7 +177,7 @@ public class SpeelveldModel implements Observable {
                 y = coordinaat.getY();
             }
         }
-        return new Integer[]{x + 1, y + 1}; //moet plus 1 omdat het 2x2 velden zijn
+        return new Integer[]{x + 2, y + 2}; //moet plus 1 omdat het 2x2 velden zijn
     }
 
     public void addListener(InvalidationListener var1){
@@ -215,6 +221,8 @@ public class SpeelveldModel implements Observable {
             teVerplaatsenPion = null;
             overigePionnen.get(pion.getKleur()).remove(pion);
             awakeListners();
+        }else {
+            //TODO geen geldige zet
         }
     }
 

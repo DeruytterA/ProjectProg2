@@ -12,4 +12,8 @@ public class Loper extends Pion {
         this.setImage(new Image("mijnlieff/Photos/" + kleur.toString().toLowerCase() + "-loper.png"));
     }
 
+    @Override
+    public boolean checkCoordinates(int x, int y){
+        return true; //TODO
+    }
 }

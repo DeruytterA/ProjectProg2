@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
+import mijnlieff.Model.Model;
 
 
 public class MatchmakingTabelCompanion extends MyController {
@@ -19,19 +20,16 @@ public class MatchmakingTabelCompanion extends MyController {
     @FXML
     private ListView spelersLijstView;
     @FXML
-    private Button verwijderUitLijst;
-    @FXML
     private Button voegtoeAanlijst;
     @FXML
     private Button kiesSpeler;
 
-    public MatchmakingTabelCompanion(){
+    public MatchmakingTabelCompanion(Model model){
         spelersLijst = FXCollections.observableArrayList();
-        ServerController.getOponents(spelersLijst);
+        model.getOpponents(spelersLijst);
     }
 
     public void initialize(){
-        verwijderUitLijst.setDisable(true);
         spelersLijstView.setItems(spelersLijst);
         spelersLijstView.setCellFactory(playerListView -> new ListCell<String>(){
 
@@ -52,13 +50,7 @@ public class MatchmakingTabelCompanion extends MyController {
     public void updateButtons(){
         boolean inlijst = model.isInLijst();
         voegtoeAanlijst.setDisable(inlijst);
-        verwijderUitLijst.setDisable(!inlijst);
         kiesSpeler.setDisable(!inlijst);
-    }
-
-    public void verwijderUitLijst(){
-        //todo stop met wachten tot gekozen
-        model.serverUitLijst();
     }
 
     public void voegToeAanlijst(){
@@ -70,6 +62,6 @@ public class MatchmakingTabelCompanion extends MyController {
     }
 
     public void doRefreshList(){
-        ServerController.getOponents(spelersLijst);
+        model.getOpponents(spelersLijst);
     }
 }

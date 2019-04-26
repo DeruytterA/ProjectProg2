@@ -14,7 +14,7 @@ public class SpelbordKiezer extends VBox {
         try {
             FXMLLoader loader = new FXMLLoader(
                     Login.class.getResource(
-                            "SpelbordKiezer.fxml"));
+                            "/mijnlieff/CompanionClasses/EigenComponenten/SpelbordKiezerScherm.fxml"));
             loader.setRoot(this);
             this.companion = new SpelbordkiezerCompanion();
             loader.setController(companion);

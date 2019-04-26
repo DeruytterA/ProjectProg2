@@ -39,11 +39,12 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     private Map<SpelStadium, Consumer> map;
 
-    public void initialize(){
-        stadium = SpelStadium.Login;
+    public AlgemeenMatchmakingCompanion(Model model) {
+        model.addListener(this);
+        this.model = model;
         loginScreen = new Login();
-        borderPane.setCenter(loginScreen);
-
+        loginScreen.setModel(model);
+        stadium = SpelStadium.Login;
         map = new HashMap<>(){{
             put(SpelStadium.Login, e -> checkServer());
             put(SpelStadium.Nickname, e -> checkNickname());
@@ -53,6 +54,10 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             put(SpelStadium.WachtOpKiezen, e -> checkWachtOpkiezen());
             put(SpelStadium.WachtOpSpelbord, e -> checkWachtOpSpelbord());
         }};
+    }
+
+    public void initialize(){
+        borderPane.setCenter(loginScreen);
     }
 
     @Override
@@ -86,8 +91,8 @@ public class AlgemeenMatchmakingCompanion extends MyController {
     }
 
     public void checkWachtOpSpelbord(){
-        if (model.getSpeelveld() != null){
-            spelBord = new SpelBord(model.getSpeelveld());
+        if (model.isSpelBordKiezer()){
+            spelBord = new SpelBord(model.getSpeelveldModel());
             borderPane.setCenter(spelBord);
             stadium = SpelStadium.Spelbord;
         }
@@ -102,7 +107,7 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     public void checkSpelbordKiezer(){
         if (model.isSpelBordKiezer()){
-            spelBord = new SpelBord(model.getSpeelveld());
+            spelBord = new SpelBord(model.getSpeelveldModel());
             borderPane.setCenter(spelBord);
             stadium = SpelStadium.Spelbord;
         }
@@ -120,11 +125,10 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     public void checkNickname(){
         if (model.getNicknamebool()){
-            tabelScreen = new MatchmakingTabel();
+            tabelScreen = new MatchmakingTabel(model);
             tabelScreen.setModel(model);
             borderPane.setCenter(tabelScreen);
             stadium = SpelStadium.Tabel;
-            //TODO verwijder nicknamescreen als listner in model
         }else if (!nicknameScreen.getTextField().equals("")){
             showAlert("Nickname in use", "The nickname you chose is already in use please try another one.");
         }

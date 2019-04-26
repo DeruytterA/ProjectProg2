@@ -1,198 +1,177 @@
 package mijnlieff.CompanionClasses.Controllers;
 
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+
 
 public class SpelbordkiezerCompanion extends MyController {
 
     @FXML
-    private VBox vBox;
-
-    @FXML
     private Button finaliseerButton;
-
     @FXML
     private GridPane gridpane;
 
-    @FXML
-    private TextField x1;
+    private ToggleButton[][] buttons;
+    private SimpleListProperty<Selectie> geselecteerd;
+    private SimpleBooleanProperty valid;
 
-    @FXML
-    private TextField y1;
+    @Override
+    public void invalidated(Observable var1) {
 
-    @FXML
-    private TextField x2;
+    }
 
-    @FXML
-    private TextField y2;
-
-    @FXML
-    private TextField x3;
-
-    @FXML
-    private TextField y3;
-
-    @FXML
-    private TextField x4;
-
-    @FXML
-    private TextField y4;
-
-    private TextField[][] alleTextFields;
-    private Integer[][] alleWaarden;
-    private boolean numeric;
+    public SpelbordkiezerCompanion(){
+        buttons = new ToggleButton[11][11];
+        geselecteerd = new SimpleListProperty<>();
+        valid = new SimpleBooleanProperty(false);
+    }
 
     public void initialize(){
-        numeric = false;
-        alleTextFields = new TextField[][] {
-                new TextField[]{
-                        x1, x2, x3, x4
-                }, new TextField[]{
-                        y1, y2, y3, y4
+        gridpane.setPrefSize(50*11,50*11);
+        for (int i = 0; i < 11 ; i++) {
+            for (int j = 0; j < 11 ; j++) {
+                System.out.println("button " + i + " " + j);
+                ToggleButton button = new ToggleButton();
+                button.setSelected(false);
+                button.setPrefSize(50,50);
+                button.selectedProperty().addListener(o -> buttonPressed(button));
+                buttons[i][j] = button;
+                gridpane.add(button, i, j);
+            }
+        }
+        finaliseerButton.disableProperty().bind(valid);
+    }
+
+    public void checkvalues(){
+        if (geselecteerd.size() == 4){
+            Integer[][] intarr = new Integer[4][2];
+            int i = 0;
+            while (i < geselecteerd.size()){
+                intarr[i] = geselecteerd.get(i).getLinksBoven();
+                i++;
+            }
+            boolean xWaarden = false;
+            boolean yWaarden = false;
+            for (Integer[] inarr :intarr) {
+                if (inarr[0] == 0){
+                    xWaarden = true;
                 }
-        };
-        alleWaarden = new Integer[][]{
-                new Integer[4], new Integer[4]
-        };
-        for (TextField[] fieldarr:alleTextFields) {
-            for (TextField field:fieldarr) {
-                field.textProperty().addListener(o -> checkValue());
+                if (inarr[1] == 0){
+                    yWaarden = true;
+                }
+            }
+            if (xWaarden && yWaarden){
+                valid.set(true);
+            }else {
+                valid.set(false);
+            }
+        }
+        valid.set(false);
+    }
+
+    public void buttonPressed(ToggleButton button){
+        checkvalues();
+        if (button.isSelected()){
+            if (magKlikken(button)){
+                geselecteerd.add(new Selectie(button).select(true));
+            }else {
+                button.setSelected(false);
+            }
+        }else {
+            Selectie selectie = inWelkeSelectie(button);
+            if (selectie != null){
+                geselecteerd.remove(inWelkeSelectie(button).select(false));
             }
         }
     }
 
-    public void checkValue(){
-        numeric = true;
-        vBox.getStyleClass().removeAll("invalid");
+    public boolean magKlikken(ToggleButton button){
+        Integer[] coordinaat = vindLocatie(button);
+        return coordinaat[0] != 10 && coordinaat[1] != 10;
+    }
+
+    public Selectie inWelkeSelectie(ToggleButton button){
         int i = 0;
-        while (i < alleTextFields.length && numeric){
+        while (i < geselecteerd.size() && !geselecteerd.get(i).buttonInSelectie(button)){
+            i++;
+        }
+        if (i < geselecteerd.size()){
+            return geselecteerd.get(i);
+        }
+        return null;
+    }
+
+    public void finaliseerPressed(){
+        model.serverStuurSpelbord(parseSelectieToString());
+    }
+
+    public String parseSelectieToString(){
+        StringBuilder output = new StringBuilder("X ");
+        for (Selectie selectie:geselecteerd) {
+            Integer[] coordinaat =  selectie.getLinksBoven();
+            output.append(coordinaat[0].toString()).append(" ").append(coordinaat[1].toString()).append(" ");
+        }
+        return output.substring(0, output.length() - 2);
+    }
+
+    public Integer[] vindLocatie(ToggleButton button){
+        Integer[] output = new Integer[2];
+        boolean found = false;
+        int i = 0;
+        while (i < buttons.length && ! found){
             int j = 0;
-            while (j < alleTextFields[i].length && numeric){
-                try {
-                    alleWaarden[i][j] = Integer.parseInt(alleTextFields[i][j].getText());
-                }catch (NumberFormatException ex){
-                    numeric = false;
-                    vBox.getStyleClass().add("invalid");
+            while (j < buttons[i].length && ! found){
+                if (buttons[i][j].equals(button)){
+                    found = true;
+                    output[0] = i;
+                    output[1] = j;
                 }
                 j++;
             }
             i++;
         }
-        if (numeric){
-            for (int j = 0; j < alleWaarden.length; j++) {
-                if (isCoordinaatInput(alleWaarden[0][j] + 1 , alleWaarden[1][j])){
-                    vBox.getStyleClass().add("invalid");
-                    finaliseerButton.setDisable(true);
-                }else if (isCoordinaatInput(alleWaarden[0][j], alleWaarden[1][j] + 1)){
-                    vBox.getStyleClass().add("invalid");
-                    finaliseerButton.setDisable(true);
-                }else if (isCoordinaatInput(alleWaarden[0][j] + 1, alleWaarden[1][j] + 1)){
-                    vBox.getStyleClass().add("invalid");
-                    finaliseerButton.setDisable(true);
-                }else {
-                    updateGridpane();
-                }
-            }
-        }
-    }
-    
-    public void invalidated(Observable var1){
-
-    }
-
-    public void opschuiven(Integer[] arr, int kleinste){
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = arr[i] - kleinste;
-        }
-    }
-
-    public boolean checkWaarden(Integer[] arr){
-        for (int getal:arr) {
-            if (getal == 0){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void updateGridpane(){
-        //TODO zware opkuis hier ik bedoel deze klasse
-        int grootsteX = grootste(alleWaarden[0]);
-        int grootsteY = grootste(alleWaarden[1]);
-        gridpane.setPrefSize(grootsteX * 10, grootsteY * 10);
-        vBox.setAlignment(Pos.TOP_CENTER);
-        for (int i = 0; i < grootsteX; i++) {
-            gridpane.addColumn(i);
-        }
-        for (int i = 0; i < grootsteY; i++){
-            gridpane.addRow(i);
-        }
-        for (int i = 0; i < grootsteX ; i++) {
-            for (int j = 0; j < grootsteY ; j++) {
-                if (isCoordinaatInput(i, j)){
-                    Rectangle[] rects = new Rectangle[4];
-                    for (int k = 0; k < 4 ; k++) {
-                        Rectangle rect = new Rectangle();
-                        rect.setHeight(20);
-                        rect.setWidth(20);
-                        rect.setFill(Color.GREEN);
-                        rects[k] = rect;
-                    }
-                    gridpane.add(rects[0], i, j);
-                    gridpane.add(rects[1], i + 1, j);
-                    gridpane.add(rects[2], i, j +1);
-                    gridpane.add(rects[3], i + 1, j + 1);
-                }
-            }
-        }
-    }
-
-    public boolean isCoordinaatInput(int x, int y){
-        for (int i = 0; i < alleWaarden[0].length; i++) {
-            if (alleWaarden[0][i] == x && alleWaarden[1][i] == y){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public int grootste(Integer[] array){
-        int output = 0;
-        System.out.println(array);
-        for (Integer getal:array) {
-            if (getal > output){
-                output = getal;
-            }
-        }
         return output;
     }
 
-    public int kleinste(Integer[] array){
-        int output = array[0];
-        for (Integer getal:array) {
-            if (getal < output){
-                output = getal;
+    public class Selectie{
+
+        private ToggleButton[] dezeSelectie;
+        private Integer[] linksBoven;
+
+        public Selectie(ToggleButton button){
+            linksBoven = vindLocatie(button);
+            dezeSelectie = new ToggleButton[] {
+                    button,
+                    buttons[linksBoven[0] + 1][linksBoven[1]],
+                    buttons[linksBoven[0]][linksBoven[1] + 1],
+                    buttons[linksBoven[0] + 1][linksBoven[1] + 1]
+            };
+        }
+
+        public Selectie select(boolean bool){
+            for (ToggleButton button:dezeSelectie) {
+                button.setSelected(bool);
             }
+            return this;
         }
-        return output;
+
+        public boolean buttonInSelectie(ToggleButton button){
+            int i = 0;
+            while (i < dezeSelectie.length && !dezeSelectie[i].equals(button)){
+                i++;
+            }
+            return i < dezeSelectie.length;
+        }
+
+        public Integer[] getLinksBoven() {
+            return linksBoven;
+        }
     }
 
-    public void finaliseerPressed(){
-        if (!checkWaarden(alleWaarden[0])){
-            opschuiven(alleWaarden[0], kleinste(alleWaarden[0]));
-        }
-        if (!checkWaarden(alleWaarden[1])){
-            opschuiven(alleWaarden[1], kleinste(alleWaarden[1]));
-        }
-        updateGridpane();
-
-    }
 }
 

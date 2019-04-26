@@ -7,7 +7,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import mijnlieff.Kleur;
-import mijnlieff.Model.Model;
 import mijnlieff.Model.SpeelveldModel;
 import mijnlieff.Pionnen.Pion;
 
@@ -30,6 +29,7 @@ public class SpelbordCompanion extends MyController{
 
     public SpelbordCompanion(SpeelveldModel model){
         this.model = model;
+        model.addListener(this);
     }
 
     public void initialize(){
@@ -68,6 +68,4 @@ public class SpelbordCompanion extends MyController{
         witteOver.getChildren().addAll(over.get(Kleur.WIT));
         zwarteOver.getChildren().addAll(over.get(Kleur.ZWART));
     }
-
-
 }

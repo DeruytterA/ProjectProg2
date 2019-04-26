@@ -10,7 +10,6 @@ public abstract class MyController implements InvalidationListener {
 
     public void setModel(Model model){
         this.model = model;
-        model.addListener(this);
     }
 
     public abstract void invalidated(Observable var1);

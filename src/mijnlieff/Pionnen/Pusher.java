@@ -12,4 +12,9 @@ public class Pusher extends Pion {
     public void initialize() {
         this.setImage(new Image("mijnlieff/Photos/" + kleur.toString().toLowerCase() + "-pusher.png"));
     }
+
+    @Override
+    public boolean checkCoordinates(int x, int y){
+        return true; //TODO
+    }
 }

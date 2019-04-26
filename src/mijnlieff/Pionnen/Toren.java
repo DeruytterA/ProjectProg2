@@ -12,4 +12,8 @@ public class Toren extends Pion {
     public void initialize() {
         this.setImage(new Image("mijnlieff/Photos/" + kleur.toString().toLowerCase() + "-toren.png"));
     }
+    @Override
+    public boolean checkCoordinates(int x, int y){
+        return true; //TODO
+    }
 }

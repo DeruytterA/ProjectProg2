@@ -3,49 +3,34 @@ package mijnlieff.Model;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
-import mijnlieff.Kleur;
-import mijnlieff.Pionnen.*;
+import javafx.collections.ObservableList;
 import mijnlieff.CompanionClasses.Controllers.ServerController;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public class Model implements Observable {
 
     private boolean einde;
-    private boolean matchmaking;
     private boolean spelBordKiezer;
     private boolean eerste;
     private boolean nickname;
     private boolean serverAan;
     private boolean spelStartBool;
-    private int plaatsnu;
     private boolean inLijst;
     private String nicknameString;
     private String tegenstander;
-    private Pion teVerplaatsenPion;
-
-    private SpeelveldModel speelveld;
+    private ServerController serverController;
+    private SpeelveldModel speelveldModel;
 
     private ArrayList<InvalidationListener> listeners;
 
-    private Kleur kleur;
-
-    public Model(String serverNaam, String poort, boolean matchmaking){
-        this(matchmaking);
-        speelveld = new SpeelveldModel(0, 0, 0, 2, 2, 0, 2, 2, matchmaking);
-        startServer(serverNaam, poort);
-        ServerController.interactief();
-        awakeListners();
+    public Model(ServerController serverController) {
+        this();
+        this.serverController = serverController;
     }
 
-    public Model(boolean matchmaking) {
-        this.matchmaking = matchmaking;
-
-        kleur = Kleur.WIT;
+    public Model(){
         listeners = new ArrayList<>();
-        plaatsnu = 0;
-
     }
 
     public void addListener(InvalidationListener var1){
@@ -60,45 +45,45 @@ public class Model implements Observable {
         listeners.forEach(o -> o.invalidated(this));
     }
 
-    //Spelfunctionaliteiten
-
-    public void parseStringToStap(String line){
-        speelveld.parseStringToStap(line);
-    }
-
     //vanaf hier alle serverCommunicatie
 
     public void serverNickname(String nickname){
-        ServerController.nickname(nickname);
+        serverController.nickname(nickname);
     }
 
     public void startServer(String serverNaam, String poort){
-        new ServerController(serverNaam, poort);
-        ServerController.setModel(this);
-        ServerController.Startmatchmaking();
+        serverController = new ServerController(serverNaam, poort);
+        serverController.setModel(this);
+        serverController.Startmatchmaking();
     }
 
     public void serverInlijst(){
-        ServerController.plaatsInlijst();
-    }
-
-    public void serverUitLijst(){
-        ServerController.haalUitLijst();
+        serverController.plaatsInlijst();
     }
 
     public void kiesSpeler(String speler){
-        ServerController.kiesSpeler(speler);
+        serverController.kiesSpeler(speler);
         awakeListners();
     }
 
-    public void serverStuurSpelBord(String string){
-        ServerController.stuurSpelbord(string);
-    }
-
     public void serverWachtOpSpelBord(){
-        ServerController.ontvangSpelbord();
+        serverController.ontvangSpelbord();
     }
 
+    public void serverStuurSpelbord(String spelbord){
+        setSpelBordString(spelbord);
+        serverController.stuurSpelbord(spelbord);
+        setSpelBordKiezer(true);
+        setSpelBordString(spelbord);
+    }
+
+    public void getOpponents(ObservableList<String> lijst){
+        serverController.getOpponents(lijst);
+    }
+
+    public void serverWachtopTegenstander(){
+        serverController.wachtOpTegenstander();
+    }
 
     //vanaf hier alle getters en setters van het Model
 
@@ -123,14 +108,6 @@ public class Model implements Observable {
     public void setNicknamebool(boolean nickname){
         this.nickname = nickname;
         awakeListners();
-    }
-
-    public SpeelveldModel getgrid() {
-        return speelveld;
-    }
-
-    public int getPlaatsnu() {
-        return plaatsnu;
     }
 
     public boolean isInLijst() {
@@ -182,24 +159,25 @@ public class Model implements Observable {
         awakeListners();
     }
 
-    public void setSpeelveld(String input){
-        //TODO maak het juiste speelveld met de input string
-
-        setSpelBordKiezer(true);
+    public void setSpelBordString(String spelbord){
+        speelveldModel = new SpeelveldModel(
+                Character.getNumericValue(spelbord.charAt(2)),
+                Character.getNumericValue(spelbord.charAt(4)),
+                Character.getNumericValue(spelbord.charAt(6)),
+                Character.getNumericValue(spelbord.charAt(8)),
+                Character.getNumericValue(spelbord.charAt(10)),
+                Character.getNumericValue(spelbord.charAt(12)),
+                Character.getNumericValue(spelbord.charAt(14)),
+                Character.getNumericValue(spelbord.charAt(16)),
+                true,
+                serverController
+        );
     }
 
-    public SpeelveldModel getSpeelveld(){
-        return speelveld;
+    public ServerController getServer(){
+        return serverController;
     }
 
-    public Pion getTeVerplaatsenPion() {
-        return teVerplaatsenPion;
-    }
-
-    public void setTeVerplaatsenPion(Pion teVerplaatsenPion) {
-        this.teVerplaatsenPion = teVerplaatsenPion;
-        awakeListners();
-    }
 
     public boolean isEinde() {
         return einde;
@@ -208,5 +186,9 @@ public class Model implements Observable {
     public void setEinde(boolean einde) {
         this.einde = einde;
         awakeListners();
+    }
+
+    public SpeelveldModel getSpeelveldModel() {
+        return speelveldModel;
     }
 }
