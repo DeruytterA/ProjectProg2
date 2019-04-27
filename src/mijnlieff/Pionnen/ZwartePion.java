@@ -2,27 +2,23 @@ package mijnlieff.Pionnen;
 
 import javafx.scene.image.Image;
 
-public class LegePion extends Pion {
+public class ZwartePion extends Pion {
 
     private char character = ' ';
 
-    public LegePion(boolean matchmaking) {
+    public ZwartePion(boolean matchmaking) {
         super(matchmaking);
     }
 
     @Override
     public void initialize() {
-        if ((xwaarde + ywaarde) % 2 == 0){
-            this.setImage(new Image("mijnlieff/Photos/Achtergrond2.png"));
-        }else {
-            this.setImage(new Image("mijnlieff/Photos/Achtergrond1.png"));
-        }
+        this.setImage(new Image("mijnlieff/Photos/Zwart.png"));
         opVeld();
     }
 
     @Override
     public boolean checkCoordinates(int x, int y){
-        return true;//TODO
+        return false;//TODO
     }
 
     @Override

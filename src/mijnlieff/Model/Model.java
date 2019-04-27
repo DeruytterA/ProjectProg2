@@ -12,7 +12,7 @@ public class Model implements Observable {
 
     private boolean einde;
     private boolean spelBordKiezer;
-    private boolean eerste;
+    private boolean maakSpelbord;
     private boolean nickname;
     private boolean serverAan;
     private boolean spelStartBool;
@@ -74,7 +74,6 @@ public class Model implements Observable {
         setSpelBordString(spelbord);
         serverController.stuurSpelbord(spelbord);
         setSpelBordKiezer(true);
-        setSpelBordString(spelbord);
     }
 
     public void getOpponents(ObservableList<String> lijst){
@@ -128,12 +127,12 @@ public class Model implements Observable {
         awakeListners();
     }
 
-    public boolean isEerste() {
-        return eerste;
+    public boolean isMaakSpelbord() {
+        return maakSpelbord;
     }
 
-    public void setEerste(boolean eerste) {
-        this.eerste = eerste;
+    public void setMaakSpelbord(boolean maakSpelbord) {
+        this.maakSpelbord = maakSpelbord;
         awakeListners();
     }
 
@@ -170,8 +169,9 @@ public class Model implements Observable {
                 Character.getNumericValue(spelbord.charAt(14)),
                 Character.getNumericValue(spelbord.charAt(16)),
                 true,
-                serverController
+                this
         );
+        setSpelBordKiezer(true);
     }
 
     public ServerController getServer(){

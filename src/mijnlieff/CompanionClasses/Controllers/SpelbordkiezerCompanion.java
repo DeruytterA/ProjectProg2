@@ -7,6 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
+import mijnlieff.CompanionClasses.EigenComponenten.MyToggleButton;
+
+import java.util.ArrayList;
 
 
 public class SpelbordkiezerCompanion extends MyController {
@@ -16,8 +19,8 @@ public class SpelbordkiezerCompanion extends MyController {
     @FXML
     private GridPane gridpane;
 
-    private ToggleButton[][] buttons;
-    private SimpleListProperty<Selectie> geselecteerd;
+    private MyToggleButton[][] buttons;
+    private ArrayList<Selectie> geselecteerd;
     private SimpleBooleanProperty valid;
 
     @Override
@@ -26,8 +29,8 @@ public class SpelbordkiezerCompanion extends MyController {
     }
 
     public SpelbordkiezerCompanion(){
-        buttons = new ToggleButton[11][11];
-        geselecteerd = new SimpleListProperty<>();
+        buttons = new MyToggleButton[11][11];
+        geselecteerd = new ArrayList<>();
         valid = new SimpleBooleanProperty(false);
     }
 
@@ -35,16 +38,16 @@ public class SpelbordkiezerCompanion extends MyController {
         gridpane.setPrefSize(50*11,50*11);
         for (int i = 0; i < 11 ; i++) {
             for (int j = 0; j < 11 ; j++) {
-                System.out.println("button " + i + " " + j);
-                ToggleButton button = new ToggleButton();
-                button.setSelected(false);
+                MyToggleButton button = new MyToggleButton(i,j);
+                button.verWijderSelectie();
                 button.setPrefSize(50,50);
                 button.selectedProperty().addListener(o -> buttonPressed(button));
                 buttons[i][j] = button;
-                gridpane.add(button, i, j);
+                gridpane.add(button, j, i);
             }
         }
-        finaliseerButton.disableProperty().bind(valid);
+        finaliseerButton.disableProperty().bind(valid.not());
+        checkvalues();
     }
 
     public void checkvalues(){
@@ -70,40 +73,31 @@ public class SpelbordkiezerCompanion extends MyController {
             }else {
                 valid.set(false);
             }
+        }else {
+            valid.set(false);
         }
-        valid.set(false);
     }
 
-    public void buttonPressed(ToggleButton button){
+    public boolean magKlikken(MyToggleButton button){
+        if (button.getxWaarde() == 10 || button.getyWaarde() == 10 || geselecteerd.size() == 4){
+            return false;
+        }else {
+            return !buttons[button.getxWaarde() + 1][button.getyWaarde()].isInSelectie() && !buttons[button.getxWaarde()][button.getyWaarde() + 1].isInSelectie() && !buttons[button.getxWaarde() + 1][button.getyWaarde() + 1].isInSelectie();
+        }
+    }
+
+    public void buttonPressed(MyToggleButton button){
         checkvalues();
-        if (button.isSelected()){
+        if (button.isSelected() && !button.isInSelectie()){
             if (magKlikken(button)){
-                geselecteerd.add(new Selectie(button).select(true));
+                new Selectie(button);
             }else {
                 button.setSelected(false);
             }
-        }else {
-            Selectie selectie = inWelkeSelectie(button);
-            if (selectie != null){
-                geselecteerd.remove(inWelkeSelectie(button).select(false));
-            }
+        }else if (!button.isSelected() && button.isInSelectie()){
+            Selectie selectie = button.getSelectie();
+            selectie.select(false);
         }
-    }
-
-    public boolean magKlikken(ToggleButton button){
-        Integer[] coordinaat = vindLocatie(button);
-        return coordinaat[0] != 10 && coordinaat[1] != 10;
-    }
-
-    public Selectie inWelkeSelectie(ToggleButton button){
-        int i = 0;
-        while (i < geselecteerd.size() && !geselecteerd.get(i).buttonInSelectie(button)){
-            i++;
-        }
-        if (i < geselecteerd.size()){
-            return geselecteerd.get(i);
-        }
-        return null;
     }
 
     public void finaliseerPressed(){
@@ -116,56 +110,42 @@ public class SpelbordkiezerCompanion extends MyController {
             Integer[] coordinaat =  selectie.getLinksBoven();
             output.append(coordinaat[0].toString()).append(" ").append(coordinaat[1].toString()).append(" ");
         }
-        return output.substring(0, output.length() - 2);
-    }
-
-    public Integer[] vindLocatie(ToggleButton button){
-        Integer[] output = new Integer[2];
-        boolean found = false;
-        int i = 0;
-        while (i < buttons.length && ! found){
-            int j = 0;
-            while (j < buttons[i].length && ! found){
-                if (buttons[i][j].equals(button)){
-                    found = true;
-                    output[0] = i;
-                    output[1] = j;
-                }
-                j++;
-            }
-            i++;
-        }
-        return output;
+        return output.substring(0, output.length() - 1);
     }
 
     public class Selectie{
 
-        private ToggleButton[] dezeSelectie;
+        private MyToggleButton[] dezeSelectie;
         private Integer[] linksBoven;
 
-        public Selectie(ToggleButton button){
-            linksBoven = vindLocatie(button);
-            dezeSelectie = new ToggleButton[] {
+        public Selectie(MyToggleButton button){
+            linksBoven = new Integer[2];
+            linksBoven[0] = button.getxWaarde();
+            linksBoven[1] = button.getyWaarde();
+            dezeSelectie = new MyToggleButton[] {
                     button,
                     buttons[linksBoven[0] + 1][linksBoven[1]],
                     buttons[linksBoven[0]][linksBoven[1] + 1],
                     buttons[linksBoven[0] + 1][linksBoven[1] + 1]
             };
+            for (MyToggleButton knop:dezeSelectie) {
+                knop.setSelectie(this);
+            }
+            select(true);
         }
 
-        public Selectie select(boolean bool){
+        public void select(boolean bool){
+            if (bool){
+                geselecteerd.add(this);
+            }else {
+                for (MyToggleButton button:dezeSelectie) {
+                    button.verWijderSelectie();
+                }
+                geselecteerd.remove(this);
+            }
             for (ToggleButton button:dezeSelectie) {
                 button.setSelected(bool);
             }
-            return this;
-        }
-
-        public boolean buttonInSelectie(ToggleButton button){
-            int i = 0;
-            while (i < dezeSelectie.length && !dezeSelectie[i].equals(button)){
-                i++;
-            }
-            return i < dezeSelectie.length;
         }
 
         public Integer[] getLinksBoven() {

@@ -9,20 +9,27 @@ import mijnlieff.Model.SpeelveldModel;
 import java.util.ArrayList;
 
 public abstract class Pion extends ImageView{
+
+    private static char character = ' ';
+
     protected Boolean opVeld;
     protected SpeelveldModel model;
     protected Kleur kleur;
     protected int xwaarde;
     protected int ywaarde;
+    protected boolean matchmaking;
 
     public Pion(boolean matchmaking) {
         super();
+        this.matchmaking = matchmaking;
         this.setPickOnBounds(true);
         this.setPreserveRatio(true);
         aanRand();
-        if (matchmaking){
-            this.setOnMouseClicked(e -> checkMouseClicked());
-        }
+    }
+
+    public Pion(boolean matchmaking, SpeelveldModel model){
+        this(matchmaking);
+        this.model = model;
     }
 
 
@@ -58,7 +65,6 @@ public abstract class Pion extends ImageView{
             if (this instanceof LegePion && model.getTeVerplaatsenPion() != null){
                 model.verplaatsPionNaar(xwaarde, ywaarde, model.getTeVerplaatsenPion());
             }
-            //TODO als er op een pion geklikt wordt dat al op het veld staat en het is geen lege pion
         }
     }
 
@@ -68,6 +74,9 @@ public abstract class Pion extends ImageView{
 
     public void setKleur(Kleur kleur){
         this.kleur = kleur;
+        if (matchmaking && model.getMijnKleur().equals(kleur)){
+            this.setOnMouseClicked(e -> checkMouseClicked());
+        }
     }
 
     public Kleur getKleur() {
@@ -77,5 +86,7 @@ public abstract class Pion extends ImageView{
     public abstract void initialize();
 
     public abstract boolean checkCoordinates(int x, int y); //TODO implementeer dit in de verschillende pionnen
+
+    public abstract char getCharacter();
 
 }

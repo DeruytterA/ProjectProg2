@@ -53,6 +53,7 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             put(SpelStadium.Spelbord, e -> checkSpelbord());
             put(SpelStadium.WachtOpKiezen, e -> checkWachtOpkiezen());
             put(SpelStadium.WachtOpSpelbord, e -> checkWachtOpSpelbord());
+            put(SpelStadium.WachtOpTegenSpeler, e -> checkWachtOpTegenspeler());
         }};
     }
 
@@ -62,6 +63,7 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     @Override
     public void invalidated(Observable var1) {
+
         if (model.getNicknamebool()){
             nicknameLabel.setText("jouw nickname is: " + model.getNicknameString());
         }
@@ -72,8 +74,9 @@ public class AlgemeenMatchmakingCompanion extends MyController {
     }
 
     public void iseerst(){
-        if (model.isEerste()) {
+        if (model.isMaakSpelbord()) {
             spelbordKiezerScreen = new SpelbordKiezer();
+            spelbordKiezerScreen.setModel(model);
             borderPane.setCenter(spelbordKiezerScreen);
             stadium = SpelStadium.SpelBordKiezer;
         } else {
@@ -81,6 +84,13 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             borderPane.setCenter(wachten);
             stadium = SpelStadium.WachtOpSpelbord;
             model.serverWachtOpSpelBord();
+        }
+    }
+
+    public void checkWachtOpTegenspeler(){
+        if (!speelveldModel.isWachten()){
+            borderPane.setCenter(spelBord);
+            stadium = SpelStadium.Spelbord;
         }
     }
 
@@ -92,7 +102,9 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     public void checkWachtOpSpelbord(){
         if (model.isSpelBordKiezer()){
-            spelBord = new SpelBord(model.getSpeelveldModel());
+            speelveldModel = model.getSpeelveldModel();
+            speelveldModel.addListener(this);
+            spelBord = new SpelBord(speelveldModel);
             borderPane.setCenter(spelBord);
             stadium = SpelStadium.Spelbord;
         }
@@ -102,12 +114,20 @@ public class AlgemeenMatchmakingCompanion extends MyController {
         if (model.isEinde()){
             //TODO maak een einde scherm met winnaar of verliezer
             stadium = SpelStadium.Einde;
+        }else {
+            if (speelveldModel.isWachten()){
+                Wachten wachten = new Wachten("Wachten op een zet van de tegenspeler");
+                borderPane.setCenter(wachten);
+                stadium = SpelStadium.WachtOpTegenSpeler;
+            }
         }
     }
 
     public void checkSpelbordKiezer(){
         if (model.isSpelBordKiezer()){
-            spelBord = new SpelBord(model.getSpeelveldModel());
+            speelveldModel = model.getSpeelveldModel();
+            speelveldModel.addListener(this);
+            spelBord = new SpelBord(speelveldModel);
             borderPane.setCenter(spelBord);
             stadium = SpelStadium.Spelbord;
         }
@@ -161,7 +181,7 @@ public class AlgemeenMatchmakingCompanion extends MyController {
         WachtOpKiezen,
         Spelbord,
         Einde,
-        Zandloper
+        WachtOpTegenSpeler
     }
 
     private void showAlert(String header, String context){

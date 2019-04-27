@@ -71,7 +71,7 @@ public class ServerController {
         }
     }
 
-    public void StuurZet(String zet){
+    public void stuurZet(String zet){
         serverOut.println(zet);
     }
 
@@ -125,7 +125,6 @@ public class ServerController {
     public void nickname(String naam){
         serverOut.println("I " + naam);
         String string = receive();
-        System.out.println(string);
         if (string.equals("+")){
             model.setNicknamebool(true);
             model.setNickname(naam);
@@ -178,9 +177,9 @@ public class ServerController {
             model.setSpelStartBool(false);
         }else {
             if (input.charAt(2) == 'T'){
-                model.setEerste(true);
+                model.setMaakSpelbord(true);
             }else {
-                model.setEerste(false);
+                model.setMaakSpelbord(false);
             }
             model.setSpelStartBool(true);
             model.setTegenstander(input.substring(4));
@@ -210,9 +209,7 @@ public class ServerController {
     }
 
     public void stuurSpelbord(String string){
-        String output = "X " + string;
-        serverOut.println(output);
-        parseSpelbord(output);
+        serverOut.println(string);
     }
 
     public void ontvangSpelbord(){

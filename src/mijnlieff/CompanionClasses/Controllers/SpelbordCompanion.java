@@ -42,6 +42,7 @@ public class SpelbordCompanion extends MyController{
         BorderPane.setAlignment(grid, Pos.CENTER);
         BorderPane.setAlignment(witteOver, Pos.CENTER);
         BorderPane.setAlignment(zwarteOver, Pos.CENTER);
+        invalidated(model);
     }
 
     public void invalidated(Observable var1){
@@ -53,9 +54,15 @@ public class SpelbordCompanion extends MyController{
         grid.getChildren().clear();
         for (int i = 0; i < veld.length; i++) {
             for (int j = 0; j < veld[0].length; j++) {
-                veld[i][j].fitWidthProperty().bind(grid.widthProperty().divide(4));
-                veld[i][j].fitHeightProperty().bind(grid.heightProperty().divide(4));
-                grid.add(veld[i][j], j, i);
+                Pion pion = veld[i][j];
+                /*
+                pion.setFitWidth(100);
+                pion.setFitHeight(100);
+                 */
+                veld[i][j].fitWidthProperty().bind(grid.widthProperty().divide(veld.length));
+                veld[i][j].fitHeightProperty().bind(grid.heightProperty().divide(veld[i].length));
+
+                grid.add(pion, j, i);
             }
         }
     }

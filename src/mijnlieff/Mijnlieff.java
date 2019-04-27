@@ -23,8 +23,9 @@ public class Mijnlieff extends Application {
         List<String> parameters = getParameters().getRaw();
         if(parameters.size() > 0) {
             ServerController server = new ServerController(parameters.get(0), parameters.get(1));
+            SpeelveldModel spelbordModel = new SpeelveldModel(0,0,0,2,2,0,2,2, false);
+            server.setSpeelveldModel(spelbordModel);
             server.interactief();
-            SpeelveldModel spelbordModel = new SpeelveldModel(0,0,0,2,2,0,2,2, false,server);
             InteractiefCompanion companion = new InteractiefCompanion(spelbordModel);
             loadFile(primaryStage, "/mijnlieff/CompanionClasses/Controllers/FxmlEnCssFiles/Interactief.fxml", companion);
             if (parameters.size() > 2){ //start testModus
