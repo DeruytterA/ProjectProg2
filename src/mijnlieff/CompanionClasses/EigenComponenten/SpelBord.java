@@ -3,7 +3,6 @@ package mijnlieff.CompanionClasses.EigenComponenten;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
 import mijnlieff.CompanionClasses.Controllers.SpelbordCompanion;
-import mijnlieff.Model.Model;
 import mijnlieff.Model.SpeelveldModel;
 
 import java.io.IOException;
@@ -24,13 +23,18 @@ public class SpelBord extends BorderPane {
             this.companion = new SpelbordCompanion(model);
             loader.setController(companion);
             loader.load();
+            invalidate();
         }catch (IOException ex){
             throw new RuntimeException("Er is iets fout gegaan bij het inladen van de FXML van Spelbord " + ex);
         }
     }
 
     public void invalidate(){
-        companion.invalidated(model);
+        model.awakeListners();
+    }
+
+    public SpelbordCompanion getCompanion(){
+        return companion;
     }
 }
 

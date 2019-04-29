@@ -33,16 +33,11 @@ public class SpelbordCompanion extends MyController{
     }
 
     public void initialize(){
-        grid.maxHeightProperty().bindBidirectional(grid.maxWidthProperty());
-        grid.minHeightProperty().bindBidirectional(grid.minWidthProperty());
-        grid.maxHeightProperty().bindBidirectional(grid.minHeightProperty());
-        grid.minWidthProperty().bindBidirectional(grid.maxWidthProperty());
         witteOver.setAlignment(Pos.CENTER);
         zwarteOver.setAlignment(Pos.CENTER);
         BorderPane.setAlignment(grid, Pos.CENTER);
         BorderPane.setAlignment(witteOver, Pos.CENTER);
         BorderPane.setAlignment(zwarteOver, Pos.CENTER);
-        invalidated(model);
     }
 
     public void invalidated(Observable var1){
@@ -52,17 +47,20 @@ public class SpelbordCompanion extends MyController{
 
     public void checkGrid(Pion[][] veld){
         grid.getChildren().clear();
-        for (int i = 0; i < veld.length; i++) {
-            for (int j = 0; j < veld[0].length; j++) {
-                Pion pion = veld[i][j];
-                /*
-                pion.setFitWidth(100);
-                pion.setFitHeight(100);
-                 */
-                veld[i][j].fitWidthProperty().bind(grid.widthProperty().divide(veld.length));
-                veld[i][j].fitHeightProperty().bind(grid.heightProperty().divide(veld[i].length));
+        for (Pion[] pionarr :veld) {
+            for (Pion pion:pionarr) {
+                grid.add(pion,pion.getYwaarde(),pion.getXwaarde());
+                pion.opVeld();
+            }
+        }
+        setPionGrootte(veld);
+    }
 
-                grid.add(pion, j, i);
+    public void setPionGrootte(Pion[][] veld){
+        for (Pion[] pionarr :veld) {
+            for (Pion pion:pionarr) {
+                pion.setFitHeight(600/veld.length);
+                pion.setFitWidth(600/veld[0].length);
             }
         }
     }

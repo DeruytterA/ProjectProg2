@@ -74,7 +74,13 @@ public abstract class Pion extends ImageView{
 
     public void setKleur(Kleur kleur){
         this.kleur = kleur;
-        if (matchmaking && model.getMijnKleur().equals(kleur)){
+        System.out.println(matchmaking);
+        System.out.println(model);
+        System.out.println(model.getMijnKleur());
+        System.out.println(kleur);
+        System.out.println(this);
+        if ((matchmaking && model.getMijnKleur().equals(kleur)) || this instanceof LegePion){
+            System.out.println(this + " :: "  + "mousecklicked");
             this.setOnMouseClicked(e -> checkMouseClicked());
         }
     }

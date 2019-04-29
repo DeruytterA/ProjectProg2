@@ -52,7 +52,7 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             put(SpelStadium.Tabel, e -> checkTabel());
             put(SpelStadium.Spelbord, e -> checkSpelbord());
             put(SpelStadium.WachtOpKiezen, e -> checkWachtOpkiezen());
-            put(SpelStadium.WachtOpSpelbord, e -> checkWachtOpSpelbord());
+            put(SpelStadium.WachtOpSpelbord, e -> checkSpelbordKiezer());
             put(SpelStadium.WachtOpTegenSpeler, e -> checkWachtOpTegenspeler());
         }};
     }
@@ -63,7 +63,6 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     @Override
     public void invalidated(Observable var1) {
-
         if (model.getNicknamebool()){
             nicknameLabel.setText("jouw nickname is: " + model.getNicknameString());
         }
@@ -100,16 +99,6 @@ public class AlgemeenMatchmakingCompanion extends MyController {
         }
     }
 
-    public void checkWachtOpSpelbord(){
-        if (model.isSpelBordKiezer()){
-            speelveldModel = model.getSpeelveldModel();
-            speelveldModel.addListener(this);
-            spelBord = new SpelBord(speelveldModel);
-            borderPane.setCenter(spelBord);
-            stadium = SpelStadium.Spelbord;
-        }
-    }
-
     public void checkSpelbord(){
         if (model.isEinde()){
             //TODO maak een einde scherm met winnaar of verliezer
@@ -126,7 +115,6 @@ public class AlgemeenMatchmakingCompanion extends MyController {
     public void checkSpelbordKiezer(){
         if (model.isSpelBordKiezer()){
             speelveldModel = model.getSpeelveldModel();
-            speelveldModel.addListener(this);
             spelBord = new SpelBord(speelveldModel);
             borderPane.setCenter(spelBord);
             stadium = SpelStadium.Spelbord;

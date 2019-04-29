@@ -11,3 +11,7 @@ Hopelijk finished...
 //TODO misschien nog animaties toevoegen met timeliness
 setcancel button zorgt ervoor dat elke keer dat esc ingedrukt wordt de button "aangeroepen wordt"
 
+//TODO wachten wisselen met spelbord ...
+//TODO zet versturen
+//TODO score berekenen
+//TODO waar mag zetten welke pion implementeren

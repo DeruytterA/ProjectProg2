@@ -2,7 +2,6 @@ package mijnlieff.Model;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.scene.shape.Rectangle;
 import mijnlieff.CompanionClasses.Controllers.ServerController;
 import mijnlieff.Kleur;
 import mijnlieff.Pionnen.*;
@@ -15,6 +14,9 @@ import java.util.function.Supplier;
 
 public class SpeelveldModel implements Observable {
 
+    public static final Kleur STARTKLEUR = Kleur.WIT;
+
+    private Kleur[] kleuren;
     private ArrayList<InvalidationListener> listeners;
     private Pion[][] veld;
     private boolean[][] inSpelVeld;
@@ -84,20 +86,30 @@ public class SpeelveldModel implements Observable {
         };
         serverController = model.getServer();
         if (model.isMaakSpelbord()){
-            mijnKleur = Kleur.WIT;
-        }else {
             mijnKleur = Kleur.ZWART;
+        }else {
+            mijnKleur = Kleur.WIT;
         }
         initialize(matchmaking);
     }
 
     public void initialize(boolean matchmaking){
+        if (mijnKleur.equals(STARTKLEUR)){
+            wachten = false;
+        }else {
+            wachten = true;
+        }
         this.matchmaking = matchmaking;
         einde = false;
         laatstePion = new LegePion(matchmaking);
         listeners = new ArrayList<>();
         kleur = Kleur.WIT;
         stappenlijst = new ArrayList<>();
+
+        kleuren = new Kleur[] {
+                Kleur.WIT,
+                Kleur.ZWART
+        };
 
         overigePionnen = new HashMap<>(){{
             put(Kleur.WIT, new ArrayList<>());
@@ -138,7 +150,6 @@ public class SpeelveldModel implements Observable {
         }};
 
         initializeVeld();
-
         vulAllePionnen();
         vulZijkanten();
         plaatsnu = 0;
@@ -156,9 +167,8 @@ public class SpeelveldModel implements Observable {
     }
 
     public void initializeVeld(){
-        Integer[] grootsten = grootste();
-        veld = new Pion[grootsten[0]][grootsten[1]];
-        inSpelVeld = new boolean[grootsten[0]][grootsten[1]];
+        veld = new Pion[11][11];
+        inSpelVeld = new boolean[11][11];
         for (boolean[] boolarr:inSpelVeld) {
             Arrays.fill(boolarr, false); //vul de volledige array met false om later de juiste waarden op true te plaatsen
         }
@@ -173,6 +183,8 @@ public class SpeelveldModel implements Observable {
             for (int j = 0; j < veld[i].length; j++) {
                 if (inSpelVeld[i][j]){
                     Pion pion = new LegePion(matchmaking);
+                    pion.setModel(this);
+                    pion.setKleur(Kleur.LEEG);
                     veld[i][j] = pion;
                     pion.setCoordinaten(i, j);
                     pion.initialize();
@@ -184,20 +196,6 @@ public class SpeelveldModel implements Observable {
                 }
             }
         }
-    }
-
-    public Integer[] grootste(){
-        int x = 0;
-        int y = 0;
-        for (Coordinaat coordinaat:bordconfiguratie) {
-            if (coordinaat.getX() > x){
-                x = coordinaat.getX();
-            }
-            if (coordinaat.getY() > y){
-                y = coordinaat.getY();
-            }
-        }
-        return new Integer[]{x + 2, y + 2}; //moet plus 1 omdat het 2x2 velden zijn
     }
 
     public void addListener(InvalidationListener var1){
@@ -213,7 +211,7 @@ public class SpeelveldModel implements Observable {
     }
 
     public void vulAllePionnen(){
-        for (Kleur speler:Kleur.values()) {
+        for (Kleur speler:kleuren) {
             for (Character character:soortenPionnen) {
                 for (int i = 0; i < 2 ; i++) {
                     Pion pion = characterSupplierMap.get(character).get();
@@ -227,7 +225,7 @@ public class SpeelveldModel implements Observable {
     }
 
     public void vulZijkanten(){
-        for (Kleur kleur2:Kleur.values()) {
+        for (Kleur kleur2:kleuren) {
             for (Character soort: soortenPionnen) {
                 overigePionnen.get(kleur2).addAll(allePionnenMap.get(kleur2).get(soort));
             }
