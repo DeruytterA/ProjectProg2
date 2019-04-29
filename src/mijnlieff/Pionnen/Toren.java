@@ -21,7 +21,7 @@ public class Toren extends Pion {
     }
     @Override
     public boolean checkCoordinates(int x, int y){
-        return true; //TODO
+        return (x == xwaarde || y == ywaarde);
     }
 
     @Override

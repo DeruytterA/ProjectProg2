@@ -2,6 +2,9 @@ package mijnlieff.Model;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mijnlieff.CompanionClasses.Controllers.ServerController;
 import mijnlieff.Kleur;
 import mijnlieff.Pionnen.*;
@@ -15,8 +18,9 @@ import java.util.function.Supplier;
 public class SpeelveldModel implements Observable {
 
     public static final Kleur STARTKLEUR = Kleur.WIT;
+    private static final Character[] soortenPionnen = new Character[]{'+', 'X', 'o', '@'};
+    private static final Kleur[] kleuren = new Kleur[]{Kleur.WIT, Kleur.ZWART};
 
-    private Kleur[] kleuren;
     private ArrayList<InvalidationListener> listeners;
     private Pion[][] veld;
     private boolean[][] inSpelVeld;
@@ -30,9 +34,11 @@ public class SpeelveldModel implements Observable {
     private Pion teVerplaatsenPion;
     private Map<Kleur, Map<Character, ArrayList<Pion>>> allePionnenMap;
     private Map<Character, Supplier<Pion>> characterSupplierMap;
-    private Character[] soortenPionnen;
-    private ArrayList<Pion> stappenlijst;
-    private Kleur kleur;
+
+    private ObservableList<Pion> stappenlijst;
+
+    //private ArrayList<Pion> stappenlijst;
+
     private Integer plaatsnu;
     private ServerController serverController;
 
@@ -85,6 +91,7 @@ public class SpeelveldModel implements Observable {
                 new Coordinaat(x4, y4)
         };
         serverController = model.getServer();
+        serverController.setSpeelveldModel(this);
         if (model.isMaakSpelbord()){
             mijnKleur = Kleur.ZWART;
         }else {
@@ -94,29 +101,63 @@ public class SpeelveldModel implements Observable {
     }
 
     public void initialize(boolean matchmaking){
-        if (mijnKleur.equals(STARTKLEUR)){
-            wachten = false;
+        if (matchmaking){
+            if (mijnKleur.equals(STARTKLEUR)){
+                wachten = false;
+            }else {
+                wachten = true;
+            }
+            einde = false;
+
+            veld = new Pion[11][11];
+            inSpelVeld = new boolean[11][11];
+            for (boolean[] boolarr:inSpelVeld) {
+                Arrays.fill(boolarr, false); //vul de volledige array met false om later de juiste waarden op true te plaatsen
+            }
+            for (Coordinaat coordinaat:bordconfiguratie) {
+                inSpelVeld[coordinaat.getX()][coordinaat.getY()] = true;
+                inSpelVeld[coordinaat.getX() + 1][coordinaat.getY()] = true;
+                inSpelVeld[coordinaat.getX()][coordinaat.getY() + 1] = true;
+                inSpelVeld[coordinaat.getX() + 1][coordinaat.getY() + 1] = true;
+            }
+            for (int i = 0; i < veld.length; i++) {
+                for (int j = 0; j < veld[i].length; j++) {
+                    if (inSpelVeld[i][j]){
+                        Pion pion = new LegePion(true);
+                        pion.setModel(this);
+                        pion.setKleur(Kleur.LEEG);
+                        veld[i][j] = pion;
+                        pion.setCoordinaten(i, j);
+                        pion.initialize();
+                    }else{
+                        Pion pion = new ZwartePion(true);
+                        veld[i][j] = pion;
+                        pion.setCoordinaten(i, j);
+                        pion.initialize();
+                    }
+                }
+            }
+            laatstePion = new LegePion(true);
         }else {
-            wachten = true;
+            veld = new Pion[4][4];
+            for (int i = 0; i < veld.length; i++) {
+                for (int j = 0; j < veld[i].length; j++) {
+                    Pion pion = new LegePion(false);
+                    pion.setModel(this);
+                    pion.setKleur(Kleur.LEEG);
+                    veld[i][j] = pion;
+                    pion.setCoordinaten(i, j);
+                    pion.initialize();
+                }
+            }
+            plaatsnu = 0;
         }
+
         this.matchmaking = matchmaking;
-        einde = false;
-        laatstePion = new LegePion(matchmaking);
+
         listeners = new ArrayList<>();
-        kleur = Kleur.WIT;
-        stappenlijst = new ArrayList<>();
 
-        kleuren = new Kleur[] {
-                Kleur.WIT,
-                Kleur.ZWART
-        };
-
-        overigePionnen = new HashMap<>(){{
-            put(Kleur.WIT, new ArrayList<>());
-            put(Kleur.ZWART, new ArrayList<>());
-        }};
-
-        soortenPionnen = new Character[]{'+', 'X', 'o', '@'};
+        stappenlijst = FXCollections.observableArrayList();
 
         allePionnenMap = new HashMap<>(){{
             put(Kleur.ZWART,
@@ -149,10 +190,8 @@ public class SpeelveldModel implements Observable {
             put(Kleur.ZWART, new ArrayList<>());
         }};
 
-        initializeVeld();
         vulAllePionnen();
         vulZijkanten();
-        plaatsnu = 0;
         awakeListners();
     }
 
@@ -164,38 +203,6 @@ public class SpeelveldModel implements Observable {
                 new Coordinaat(x4, y4)
         };
         initialize(matchmaking);
-    }
-
-    public void initializeVeld(){
-        veld = new Pion[11][11];
-        inSpelVeld = new boolean[11][11];
-        for (boolean[] boolarr:inSpelVeld) {
-            Arrays.fill(boolarr, false); //vul de volledige array met false om later de juiste waarden op true te plaatsen
-        }
-        for (Coordinaat coordinaat:bordconfiguratie) {
-            inSpelVeld[coordinaat.getX()][coordinaat.getY()] = true;
-            inSpelVeld[coordinaat.getX() + 1][coordinaat.getY()] = true;
-            inSpelVeld[coordinaat.getX()][coordinaat.getY() + 1] = true;
-            inSpelVeld[coordinaat.getX() + 1][coordinaat.getY() + 1] = true;
-        }
-
-        for (int i = 0; i < veld.length; i++) {
-            for (int j = 0; j < veld[i].length; j++) {
-                if (inSpelVeld[i][j]){
-                    Pion pion = new LegePion(matchmaking);
-                    pion.setModel(this);
-                    pion.setKleur(Kleur.LEEG);
-                    veld[i][j] = pion;
-                    pion.setCoordinaten(i, j);
-                    pion.initialize();
-                }else{
-                    Pion pion = new ZwartePion(matchmaking);
-                    veld[i][j] = pion;
-                    pion.setCoordinaten(i, j);
-                    pion.initialize();
-                }
-            }
-        }
     }
 
     public void addListener(InvalidationListener var1){
@@ -294,7 +301,7 @@ public class SpeelveldModel implements Observable {
         pion.aanRand();
     }
 
-    public Pion parseStringToPion(String line){
+    public Pion parseStringToPion(String line, Kleur kleur){
         char type = line.charAt(8);
         int xWaarde = Character.getNumericValue(line.charAt(4));
         int yWaarde = Character.getNumericValue(line.charAt(6));
@@ -306,29 +313,28 @@ public class SpeelveldModel implements Observable {
             pion = allePionnenMap.get(kleur).get(type).get(0);
         }
         pion.setModel(this);
-        veranderKleur();
         pion.setCoordinaten(xWaarde, yWaarde);
         laatstePion = pion;
         return pion;
     }
 
-    public void parseStringToStap(String line){
-        stappenlijst.add(parseStringToPion(line));
-    }
-
-    public int getAantalStappen(){
-        return stappenlijst.size();
+    public void inputlijstToStappenLijst(ArrayList<String> lijst){
+        Kleur kleur = Kleur.WIT;
+        for (String lijn:lijst) {
+            stappenlijst.add(parseStringToPion(lijn, kleur));
+            kleur = veranderKleur(kleur);
+        }
     }
 
     public int getPlaatsnu(){
         return plaatsnu;
     }
 
-    public void veranderKleur(){
+    public Kleur veranderKleur(Kleur kleur){
         if (kleur.equals(Kleur.WIT)){
-            kleur = Kleur.ZWART;
+            return Kleur.ZWART;
         }else{
-            kleur = Kleur.WIT;
+            return Kleur.WIT;
         }
     }
 
@@ -364,6 +370,11 @@ public class SpeelveldModel implements Observable {
         return mijnKleur;
     }
 
+    public void parseZetTegenstander(String string){
+        System.out.println("task klaar zet geparsed");
+        add(parseStringToPion(string, veranderKleur(mijnKleur)));
+    }
+
     public void stuurZet(int x, int y, Pion pion) {
         wachten = true;
         String teVersturen = "X ";
@@ -381,5 +392,9 @@ public class SpeelveldModel implements Observable {
 
     public boolean isWachten() {
         return wachten;
+    }
+
+    public ObservableList getStappenlijst(){
+        return stappenlijst;
     }
 }

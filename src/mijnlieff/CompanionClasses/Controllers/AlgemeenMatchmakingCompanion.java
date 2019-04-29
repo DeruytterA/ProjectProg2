@@ -101,7 +101,7 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     public void checkSpelbord(){
         if (model.isEinde()){
-            //TODO maak een einde scherm met winnaar of verliezer
+            //TODO maak een einde scherm met winnaar of verliezer kan gwn een Alert zijn met score op
             stadium = SpelStadium.Einde;
         }else {
             if (speelveldModel.isWachten()){
@@ -116,6 +116,7 @@ public class AlgemeenMatchmakingCompanion extends MyController {
         if (model.isSpelBordKiezer()){
             speelveldModel = model.getSpeelveldModel();
             spelBord = new SpelBord(speelveldModel);
+            speelveldModel.addListener(this);
             borderPane.setCenter(spelBord);
             stadium = SpelStadium.Spelbord;
         }

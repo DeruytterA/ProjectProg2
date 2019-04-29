@@ -11,6 +11,7 @@ import java.util.*;
 public class Model implements Observable {
 
     private boolean einde;
+    private boolean quit;
     private boolean spelBordKiezer;
     private boolean maakSpelbord;
     private boolean nickname;
@@ -73,7 +74,6 @@ public class Model implements Observable {
     public void serverStuurSpelbord(String spelbord){
         setSpelBordString(spelbord);
         serverController.stuurSpelbord(spelbord);
-        setSpelBordKiezer(true);
     }
 
     public void getOpponents(ObservableList<String> lijst){
@@ -134,6 +134,9 @@ public class Model implements Observable {
 
     public void setSpelBordKiezer(boolean spelBordKiezer){
         this.spelBordKiezer = spelBordKiezer;
+        if (spelBordKiezer){
+            serverController.ontvangZet();
+        }
         awakeListners();
     }
 
@@ -151,6 +154,15 @@ public class Model implements Observable {
 
     public void setTegenstander(String tegenstander) {
         this.tegenstander = tegenstander;
+        awakeListners();
+    }
+
+    public boolean isQuit() {
+        return quit;
+    }
+
+    public void setQuit(boolean quit) {
+        this.quit = quit;
         awakeListners();
     }
 
@@ -173,7 +185,6 @@ public class Model implements Observable {
     public ServerController getServer(){
         return serverController;
     }
-
 
     public boolean isEinde() {
         return einde;

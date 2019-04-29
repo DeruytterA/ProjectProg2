@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import mijnlieff.CompanionClasses.Controllers.AlgemeenMatchmakingCompanion;
 import mijnlieff.CompanionClasses.Controllers.InteractiefCompanion;
@@ -17,15 +18,16 @@ import java.util.List;
 public class Mijnlieff extends Application {
 
     private Model model;
+    private ServerController serverController;
 
     @Override
     public void start(Stage primaryStage)throws Exception{
         List<String> parameters = getParameters().getRaw();
         if(parameters.size() > 0) {
-            ServerController server = new ServerController(parameters.get(0), parameters.get(1));
+            serverController = new ServerController(parameters.get(0), parameters.get(1));
             SpeelveldModel spelbordModel = new SpeelveldModel(0,0,0,2,2,0,2,2, false);
-            server.setSpeelveldModel(spelbordModel);
-            server.interactief();
+            serverController.setSpeelveldModel(spelbordModel);
+            serverController.interactief();
             InteractiefCompanion companion = new InteractiefCompanion(spelbordModel);
             loadFile(primaryStage, "/mijnlieff/CompanionClasses/Controllers/FxmlEnCssFiles/Interactief.fxml", companion);
             if (parameters.size() > 2){ //start testModus
@@ -49,7 +51,17 @@ public class Mijnlieff extends Application {
     }
 
     public void stop(){
-        //TODO
+        if (serverController != null){
+            serverController.close();
+        }else {
+            if (model.getServer() != null){
+                model.getServer().close();
+            }
+        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText("U heeft het spel afgesloten");
+        alert.setHeaderText("Afsluiten");
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {

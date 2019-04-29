@@ -22,7 +22,7 @@ public class Puller extends Pion {
 
     @Override
     public boolean checkCoordinates(int x, int y){
-        return true; //TODO
+        return (xwaarde - 1 == x || xwaarde + 1 == x || xwaarde == x) && (ywaarde - 1 == y || ywaarde == y || ywaarde + 1 == y);
     }
 
     @Override

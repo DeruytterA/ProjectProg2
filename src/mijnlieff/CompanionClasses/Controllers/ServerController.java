@@ -7,6 +7,7 @@ import mijnlieff.Model.SpeelveldModel;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class ServerController {
@@ -26,8 +27,6 @@ public class ServerController {
         server = serverNaam;
     }
 
-    public ServerController(){}
-
     public void setModel(Model modell){
         model = modell;
     }
@@ -37,9 +36,7 @@ public class ServerController {
     }
 
 
-    //TODO Fase2 Stuur/ontvang bord configuratie (X 8x natuurlijk getal) elk getal <= 10 en minstens 1 rij en 1 kolom = 0
     //TODO Fase2 Stuur/ontvang stappen van/naar server
-    //TODO Toevoegen van Alerts als connection niet werkt
 
 
     public void Startmatchmaking(){
@@ -59,13 +56,15 @@ public class ServerController {
             PrintWriter serverInteractiefOut = new PrintWriter(socketInteracief.getOutputStream(), true)
         ){
             serverInteractiefOut.println("X");
+            ArrayList<String> inputLijst = new ArrayList<>();
             String inputlijn = serverInteractiefIn.readLine();
             while (inputlijn.charAt(2) != 'T'){
-                spelbordModel.parseStringToStap(inputlijn);
+                inputLijst.add(inputlijn);
                 serverInteractiefOut.println("X");
                 inputlijn = serverInteractiefIn.readLine();
             }
-            spelbordModel.parseStringToStap(inputlijn);
+            inputLijst.add(inputlijn);
+            spelbordModel.inputlijstToStappenLijst(inputLijst);
         }catch (IOException ex){
             throw new RuntimeException("UnknownHostException when making socket in interactief modus " + ex);
         }
@@ -76,23 +75,43 @@ public class ServerController {
     }
 
     public void ontvangZet(){
+        System.out.println("task gemaakt");
         ontvangZet = new Task<>() {
             @Override
             protected String call() {
                 return wachtOpAntwoord();
             }
         };
+
         ontvangZet.setOnSucceeded(o -> {
             try {
-                parseZet(ontvangZet.get());
+                spelbordModel.parseZetTegenstander(ontvangZet.get());
+                System.out.println(spelbordModel);
+                System.out.println(ontvangZet.get());
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
+            } catch (NullPointerException ex){
+                System.out.println("nullpointer bij ontvangzet.get");
             }
         });
+        Thread thread = new Thread(ontvangZet);
+        System.out.println("task gestart");
+        thread.start();
     }
 
-    public void parseZet(String string){
-        spelbordModel.add(spelbordModel.parseStringToPion(string));
+    public String wachtOpAntwoord(){
+        try {
+            String lijn = serverIn.readLine();
+            while (lijn == null){
+                System.out.println(lijn);
+                lijn = serverIn.readLine();
+            }
+            System.out.println(lijn);
+            return lijn;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     private String receive(){
@@ -104,8 +123,8 @@ public class ServerController {
             throw new RuntimeException("Er is iets misgegaan bij het lezen van de server " + ex);
         }
         if (string == null || (string.length() == 1 && string.charAt(0) == 'Q')){
-            //TODO quit when server gets Q
-            return null;
+            model.setQuit(true);
+            return string;
         }else{
             return string;
         }
@@ -186,24 +205,6 @@ public class ServerController {
         }
     }
 
-    public String wachtOpAntwoord(){
-        String lijn = receive();
-        while (lijn == null){
-            lijn = receive();
-        }
-        return lijn;
-    }
-
-    //TODO Fase1 terug trekken uit lijst (R sturen) (+ (als gelukt)) (? anders)
-    public void haalUitLijst(){
-        serverOut.println("R");
-        String string = receive();
-        if (string.equals("+")){
-            model.setInLijst(false);
-        }
-        wachtOpkiezen.cancel(true);
-    }
-
     public void parseSpelbord(String lijn){
         model.setSpelBordString(lijn);
     }
@@ -230,7 +231,6 @@ public class ServerController {
         thread.start();
     }
 
-    //TODO Fase1 speler kiezen uit de lijst ( C <naam> sturen) (- terug (als speler al uit lijst)) | (+ <T/F> <naam> als gekozen)
     public void kiesSpeler(String naam){
         serverOut.println("C " + naam);
         String input = receive();

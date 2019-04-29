@@ -1,6 +1,8 @@
 package mijnlieff.CompanionClasses.Controllers;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 
@@ -29,13 +31,13 @@ public class InteractiefCompanion extends MyController {
         buttonBackAll.setDisable(true);
         spelBord = new SpelBord(model);
         borderPane.setCenter(spelBord);
-        spelBord.invalidate();
+        model.awakeListners();
+        model.getStappenlijst().addListener((InvalidationListener) o -> checkButtons(model.getStappenlijst()));
     }
 
     public void invalidated(Observable var1) {
-        checkButtons();
+        checkButtons(model.getStappenlijst());
     }
-
 
     public void buttonBackAll() {
         model.backAll();
@@ -53,8 +55,8 @@ public class InteractiefCompanion extends MyController {
         model.forwardAll();
     }
 
-    public void checkButtons() {
-        if (model.getAantalStappen() == model.getPlaatsnu()) {
+    public void checkButtons(ObservableList lijst) {
+        if (lijst.size() == model.getPlaatsnu()) {
             buttonForward.setDisable(true);
             buttonForwardAll.setDisable(true);
         } else {
