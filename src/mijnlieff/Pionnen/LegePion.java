@@ -22,7 +22,7 @@ public class LegePion extends Pion {
 
     @Override
     public boolean checkCoordinates(int x, int y){
-        return true;//TODO
+        return true;
     }
 
     @Override

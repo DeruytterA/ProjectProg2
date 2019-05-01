@@ -59,7 +59,7 @@ public class Mijnlieff extends Application {
             }
         }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText("U heeft het spel afgesloten");
+        alert.setContentText("Het spel wordt afgesloten");
         alert.setHeaderText("Afsluiten");
         alert.showAndWait();
     }

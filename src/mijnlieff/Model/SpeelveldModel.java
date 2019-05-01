@@ -2,7 +2,6 @@ package mijnlieff.Model;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mijnlieff.CompanionClasses.Controllers.ServerController;
@@ -17,30 +16,32 @@ import java.util.function.Supplier;
 
 public class SpeelveldModel implements Observable {
 
-    public static final Kleur STARTKLEUR = Kleur.WIT;
+    private static final Kleur STARTKLEUR = Kleur.WIT;
     private static final Character[] soortenPionnen = new Character[]{'+', 'X', 'o', '@'};
     private static final Kleur[] kleuren = new Kleur[]{Kleur.WIT, Kleur.ZWART};
 
-    private ArrayList<InvalidationListener> listeners;
     private Pion[][] veld;
     private boolean[][] inSpelVeld;
     private Coordinaat[] bordconfiguratie;
+
     private boolean matchmaking;
-    private Map<Kleur, ArrayList<Pion>> overigePionnen;
-    private Pion laatstePion;
     private boolean wachten;
     private boolean einde;
+    private boolean quit;
+    private Integer mijnPunten;
+    private Integer tegenstanderPunten;
     private Kleur mijnKleur;
-    private Pion teVerplaatsenPion;
-    private Map<Kleur, Map<Character, ArrayList<Pion>>> allePionnenMap;
-    private Map<Character, Supplier<Pion>> characterSupplierMap;
-
-    private ObservableList<Pion> stappenlijst;
-
-    //private ArrayList<Pion> stappenlijst;
-
     private Integer plaatsnu;
     private ServerController serverController;
+    private Pion laatstePion;
+    private Pion teVerplaatsenPion;
+
+    private ArrayList<InvalidationListener> listeners;
+    private ObservableList<Pion> stappenlijst;
+
+    private Map<Kleur, ArrayList<Pion>> overigePionnen;
+    private Map<Kleur, Map<Character, ArrayList<Pion>>> allePionnenMap;
+    private Map<Character, Supplier<Pion>> characterSupplierMap;
 
     public class Coordinaat{
         private int x;
@@ -93,8 +94,10 @@ public class SpeelveldModel implements Observable {
         serverController = model.getServer();
         serverController.setSpeelveldModel(this);
         if (model.isMaakSpelbord()){
+            wachten = true;
             mijnKleur = Kleur.ZWART;
         }else {
+            wachten = false;
             mijnKleur = Kleur.WIT;
         }
         initialize(matchmaking);
@@ -153,6 +156,8 @@ public class SpeelveldModel implements Observable {
             plaatsnu = 0;
         }
 
+        mijnPunten = 0;
+        tegenstanderPunten = 0;
         this.matchmaking = matchmaking;
 
         listeners = new ArrayList<>();
@@ -247,9 +252,8 @@ public class SpeelveldModel implements Observable {
             teVerplaatsenPion = null;
             overigePionnen.get(pion.getKleur()).remove(pion);
             stuurZet(x,y,pion);
+            stappenlijst.add(pion);
             awakeListners();
-        }else {
-            //TODO geen geldige zet
         }
     }
 
@@ -302,9 +306,10 @@ public class SpeelveldModel implements Observable {
     }
 
     public Pion parseStringToPion(String line, Kleur kleur){
-        char type = line.charAt(8);
-        int xWaarde = Character.getNumericValue(line.charAt(4));
-        int yWaarde = Character.getNumericValue(line.charAt(6));
+        String[] gesplitteLijn = line.split(" ");
+        char type = gesplitteLijn[4].charAt(0);
+        int xWaarde = Integer.parseInt(gesplitteLijn[2]);
+        int yWaarde = Integer.parseInt(gesplitteLijn[3]);
         Pion pion;
         ArrayList<Pion> pionLijst =  allePionnenMap.get(kleur).get(type);
         if (stappenlijst.contains(pionLijst.get(0))){
@@ -313,6 +318,7 @@ public class SpeelveldModel implements Observable {
             pion = allePionnenMap.get(kleur).get(type).get(0);
         }
         pion.setModel(this);
+        stappenlijst.add(pion);
         pion.setCoordinaten(xWaarde, yWaarde);
         laatstePion = pion;
         return pion;
@@ -371,8 +377,162 @@ public class SpeelveldModel implements Observable {
     }
 
     public void parseZetTegenstander(String string){
-        System.out.println("task klaar zet geparsed");
-        add(parseStringToPion(string, veranderKleur(mijnKleur)));
+        if (string.length() == 1){
+            if (string.charAt(0) == 'Q'){
+                quit = true;
+                awakeListners();
+            }else if (string.charAt(0) == 'X'){
+                checkSpelGedaan(mijnKleur);
+                wachten = false;
+                laatstePion = new ZwartePion(matchmaking);
+            }
+        }else {
+            Pion pion = parseStringToPion(string, veranderKleur(mijnKleur));
+            add(pion);
+            overigePionnen.get(pion.getKleur()).remove(pion);
+            checkSpelGedaan(mijnKleur);
+        }
+        awakeListners();
+    }
+
+    public void checkSpelGedaan(Kleur kleur) {
+        if (overigePionnen.get(kleur).size() == 0){
+            einde = true;
+            berekenPunten();
+        }
+    }
+
+    private int addPunten(int aantal){
+        return aantal - 2;
+    }
+
+    private void berekenPunten() {
+        for (int i = 0; i < veld.length; i++) {
+            int mijnPionnenDezeRij = 0;
+            int tegenstanderPionnenDezeRij = 0;
+            int mijnPionnenKolom = 0;
+            int tegenstanderPionnenKolom = 0;
+            for (int j = 0; j < veld[i].length ; j++) {
+                if (inSpelVeld[i][j]){
+                    Pion pion = veld[i][j];
+                    if (pion.getKleur().equals(mijnKleur)){
+                        mijnPionnenDezeRij++;
+                    }else {
+                        tegenstanderPionnenDezeRij++;
+                    }
+                }
+                if (inSpelVeld[j][i]){
+                    Pion pion = veld[j][i];
+                    if (pion.getKleur().equals(mijnKleur)){
+                        mijnPionnenKolom++;
+                    }else {
+                        tegenstanderPionnenKolom++;
+                    }
+                }
+            }
+            if (mijnPionnenKolom > 2){
+                mijnPunten += addPunten(mijnPionnenKolom);
+            }
+            if (tegenstanderPionnenKolom > 2){
+                tegenstanderPunten += addPunten(tegenstanderPionnenKolom);
+            }
+            if (mijnPionnenDezeRij > 2){
+                mijnPunten += addPunten(mijnPionnenDezeRij);
+            }
+            if (tegenstanderPionnenDezeRij > 2){
+                tegenstanderPunten += addPunten(tegenstanderPionnenDezeRij);
+            }
+        }
+        int i = 0;
+        int j = 0;
+        while (i < 11 && j < 11){
+            int aantalDezeDiagonaalMij = 0;
+            int aantalDezeDiagonaalTegenstander = 0;
+            int ii = i;
+            int jj = j;
+            while (ii >= 0 && jj >= 0 && ii < veld.length && jj < veld.length){
+                if (inSpelVeld[ii][jj]){
+                    Pion pion = veld[ii][jj];
+                    if (pion.getKleur().equals(mijnKleur)){
+                        aantalDezeDiagonaalMij++;
+                    }else {
+                        aantalDezeDiagonaalTegenstander++;
+                    }
+                }
+                ii--;
+                jj++;
+            }
+            ii = i+1;
+            jj = j-1;
+            while (ii >= 0 && jj >= 0 && ii < veld.length && jj < veld.length){
+                if (inSpelVeld[ii][jj]){
+                    Pion pion = veld[ii][jj];
+                    if (pion.getKleur().equals(mijnKleur)){
+                        aantalDezeDiagonaalMij++;
+                    }else {
+                        aantalDezeDiagonaalTegenstander++;
+                    }
+                }
+                ii++;
+                jj--;
+            }
+            if (i == j){
+                i++;
+            }else {
+                j++;
+            }
+            if (aantalDezeDiagonaalMij > 2 ){
+                mijnPunten += addPunten(aantalDezeDiagonaalMij);
+            }
+            if (aantalDezeDiagonaalTegenstander > 2){
+                tegenstanderPunten += addPunten(aantalDezeDiagonaalTegenstander);
+            }
+        }
+        i = veld.length - 1;
+        j = 0;
+        while (i > 0 && j < 11){
+            int aantalDezeDiagonaalMij = 0;
+            int aantalDezeDiagonaalTegenstander = 0;
+            int ii = i;
+            int jj = j;
+            while (ii >= 0 && jj >= 0 && ii < veld.length && jj < veld.length){
+                if (inSpelVeld[ii][jj]){
+                    Pion pion = veld[ii][jj];
+                    if (pion.getKleur().equals(mijnKleur)){
+                        aantalDezeDiagonaalMij++;
+                    }else {
+                        aantalDezeDiagonaalTegenstander++;
+                    }
+                }
+                ii++;
+                jj++;
+            }
+            ii = i-1;
+            jj = j-1;
+            while (ii >= 0 && jj >= 0 && ii < veld.length && jj < veld.length){
+                if (inSpelVeld[ii][jj]){
+                    Pion pion = veld[ii][jj];
+                    if (pion.getKleur().equals(mijnKleur)){
+                        aantalDezeDiagonaalMij++;
+                    }else {
+                        aantalDezeDiagonaalTegenstander++;
+                    }
+                }
+                ii--;
+                jj--;
+            }
+            if (i + j == 11){
+                j ++;
+            }else {
+                i --;
+            }
+            if (aantalDezeDiagonaalMij > 2 ){
+                mijnPunten += addPunten(aantalDezeDiagonaalMij);
+            }
+            if (aantalDezeDiagonaalTegenstander > 2){
+                tegenstanderPunten += addPunten(aantalDezeDiagonaalTegenstander);
+            }
+        }
     }
 
     public void stuurZet(int x, int y, Pion pion) {
@@ -386,12 +546,41 @@ public class SpeelveldModel implements Observable {
         teVersturen += x + " " + y + " ";
         teVersturen += pion.getCharacter();
         serverController.stuurZet(teVersturen);
-        serverController.ontvangZet();
+        checkSpelGedaan(veranderKleur(mijnKleur));
+        if (!einde){
+            serverController.ontvangZet();
+        }
         awakeListners();
     }
 
     public boolean isWachten() {
         return wachten;
+    }
+
+    public boolean isEinde() {
+        return einde;
+    }
+
+    public boolean isQuit(){
+        return quit;
+    }
+
+    public void slaStapOver(){
+        wachten = true;
+        serverController.stuurZet("X");
+        checkSpelGedaan(veranderKleur(mijnKleur));
+        if (!einde){
+            serverController.ontvangZet();
+        }
+        awakeListners();
+    }
+
+    public Integer getMijnPunten() {
+        return mijnPunten;
+    }
+
+    public Integer getTegenstanderPunten() {
+        return tegenstanderPunten;
     }
 
     public ObservableList getStappenlijst(){

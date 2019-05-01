@@ -17,6 +17,7 @@ public class LoginCompanion extends MyController{
     private BooleanProperty buttonDisabled;
 
     public void initialize(){
+        loginButton.setDefaultButton(true);
         buttonDisabled = new SimpleBooleanProperty();
         buttonDisabled.setValue(true);
         TextField[] textFields = new TextField[] {

@@ -18,6 +18,7 @@ public class Model implements Observable {
     private boolean serverAan;
     private boolean spelStartBool;
     private boolean inLijst;
+
     private String nicknameString;
     private String tegenstander;
     private ServerController serverController;
@@ -134,9 +135,6 @@ public class Model implements Observable {
 
     public void setSpelBordKiezer(boolean spelBordKiezer){
         this.spelBordKiezer = spelBordKiezer;
-        if (spelBordKiezer){
-            serverController.ontvangZet();
-        }
         awakeListners();
     }
 

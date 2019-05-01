@@ -14,6 +14,7 @@ public class NicknameCompanion extends MyController {
     public void initialize(){
         nicknameTextfield.textProperty().addListener(o -> checkValue());
         nickNameButton.setDisable(true);
+        nickNameButton.setDefaultButton(true);
     }
 
     public void invalidated(Observable observable){
@@ -29,7 +30,6 @@ public class NicknameCompanion extends MyController {
         nickNameButton.setDisable(nicknameTextfield.getText().equals(""));
     }
 
-    //Onaction button
     public void checkPressed(){
         model.serverNickname(nicknameTextfield.getText());
     }

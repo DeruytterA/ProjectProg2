@@ -35,10 +35,6 @@ public class ServerController {
         spelbordModel = speelveldModel1;
     }
 
-
-    //TODO Fase2 Stuur/ontvang stappen van/naar server
-
-
     public void Startmatchmaking(){
         try {
             socket = new Socket(server, poort);
@@ -75,7 +71,6 @@ public class ServerController {
     }
 
     public void ontvangZet(){
-        System.out.println("task gemaakt");
         ontvangZet = new Task<>() {
             @Override
             protected String call() {
@@ -86,16 +81,11 @@ public class ServerController {
         ontvangZet.setOnSucceeded(o -> {
             try {
                 spelbordModel.parseZetTegenstander(ontvangZet.get());
-                System.out.println(spelbordModel);
-                System.out.println(ontvangZet.get());
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
-            } catch (NullPointerException ex){
-                System.out.println("nullpointer bij ontvangzet.get");
             }
         });
         Thread thread = new Thread(ontvangZet);
-        System.out.println("task gestart");
         thread.start();
     }
 
@@ -103,10 +93,8 @@ public class ServerController {
         try {
             String lijn = serverIn.readLine();
             while (lijn == null){
-                System.out.println(lijn);
                 lijn = serverIn.readLine();
             }
-            System.out.println(lijn);
             return lijn;
         } catch (IOException e) {
             e.printStackTrace();
@@ -118,7 +106,6 @@ public class ServerController {
         String string;
         try {
             string = serverIn.readLine();
-            System.out.println(string);
         }catch (IOException ex){
             throw new RuntimeException("Er is iets misgegaan bij het lezen van de server " + ex);
         }
@@ -211,6 +198,7 @@ public class ServerController {
 
     public void stuurSpelbord(String string){
         serverOut.println(string);
+        ontvangZet();
     }
 
     public void ontvangSpelbord(){

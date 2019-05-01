@@ -1,5 +1,6 @@
 package mijnlieff.CompanionClasses.Controllers;
 
+import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -34,8 +35,8 @@ public class AlgemeenMatchmakingCompanion extends MyController {
     private Nickname nicknameScreen;
     private MatchmakingTabel tabelScreen;
     private SpelbordKiezer spelbordKiezerScreen;
-    private SpelBord spelBord;
     private SpeelveldModel speelveldModel;
+    private MatchmakingSpelbord spelbord;
 
     private Map<SpelStadium, Consumer> map;
 
@@ -63,13 +64,36 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     @Override
     public void invalidated(Observable var1) {
-        if (model.getNicknamebool()){
-            nicknameLabel.setText("jouw nickname is: " + model.getNicknameString());
+        if ( speelveldModel != null && speelveldModel.isEinde()){
+            if (speelveldModel.getMijnPunten() > speelveldModel.getTegenstanderPunten()){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Het spel is gedaan!");
+                alert.setContentText("Proficiat je hebt gewonnen! \n Jij hebt " + speelveldModel.getMijnPunten() + " punten en de tegenstander maar " + speelveldModel.getTegenstanderPunten() + ".");
+                alert.showAndWait();
+            }else if (speelveldModel.getMijnPunten() < speelveldModel.getTegenstanderPunten()){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Het spel is gedaan!");
+                alert.setContentText("Jammer je hebt verloren. \n Jij hebt " + speelveldModel.getMijnPunten() + " punten en de tegenstander " + speelveldModel.getTegenstanderPunten() + ".");
+                alert.showAndWait();
+            }else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Het spel is gedaan!");
+                alert.setContentText("Je hebt gelijk gespeeld! \n Jij hebt " + speelveldModel.getMijnPunten() + " punten en de tegenstander ook.");
+                alert.showAndWait();
+            }
+            Platform.exit();
+        }else if (model.isQuit() || (speelveldModel != null && speelveldModel.isQuit())){
+            showAlert("Quit", "De andere speler is geQuit het spel wordt afgesloten");
+            Platform.exit();
+        }else{
+            if (model.getNicknamebool()){
+                nicknameLabel.setText("jouw nickname is: " + model.getNicknameString());
+            }
+            if (model.isspelStart()){
+                tegenstanderLabel.setText("jouw tegenstander is: " + model.getTegenstander());
+            }
+            map.get(stadium).accept(null);
         }
-        if (model.isspelStart()){
-            tegenstanderLabel.setText("jouw tegenstander is: " + model.getTegenstander());
-        }
-        map.get(stadium).accept(null);
     }
 
     public void iseerst(){
@@ -88,7 +112,7 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     public void checkWachtOpTegenspeler(){
         if (!speelveldModel.isWachten()){
-            borderPane.setCenter(spelBord);
+            spelbord.setWacht(false);
             stadium = SpelStadium.Spelbord;
         }
     }
@@ -100,24 +124,19 @@ public class AlgemeenMatchmakingCompanion extends MyController {
     }
 
     public void checkSpelbord(){
-        if (model.isEinde()){
-            //TODO maak een einde scherm met winnaar of verliezer kan gwn een Alert zijn met score op
-            stadium = SpelStadium.Einde;
-        }else {
-            if (speelveldModel.isWachten()){
-                Wachten wachten = new Wachten("Wachten op een zet van de tegenspeler");
-                borderPane.setCenter(wachten);
-                stadium = SpelStadium.WachtOpTegenSpeler;
-            }
+        if (speelveldModel.isWachten()){
+            spelbord.setWacht(true);
+            stadium = SpelStadium.WachtOpTegenSpeler;
         }
     }
 
     public void checkSpelbordKiezer(){
         if (model.isSpelBordKiezer()){
             speelveldModel = model.getSpeelveldModel();
-            spelBord = new SpelBord(speelveldModel);
+            SpelBord spelBord = new SpelBord(speelveldModel);
             speelveldModel.addListener(this);
-            borderPane.setCenter(spelBord);
+            spelbord = new MatchmakingSpelbord(spelBord, speelveldModel);
+            borderPane.setCenter(spelbord);
             stadium = SpelStadium.Spelbord;
         }
     }

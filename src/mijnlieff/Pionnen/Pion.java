@@ -85,7 +85,7 @@ public abstract class Pion extends ImageView{
 
     public abstract void initialize();
 
-    public abstract boolean checkCoordinates(int x, int y); //TODO implementeer dit in de verschillende pionnen
+    public abstract boolean checkCoordinates(int x, int y);
 
     public abstract char getCharacter();
 
