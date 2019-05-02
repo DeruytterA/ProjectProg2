@@ -7,6 +7,7 @@ import mijnlieff.Model.SpeelveldModel;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -73,15 +74,14 @@ public class ServerController {
     public void ontvangZet(){
         ontvangZet = new Task<>() {
             @Override
-            protected String call() {
+            protected String call(){
                 return wachtOpAntwoord();
             }
         };
-
         ontvangZet.setOnSucceeded(o -> {
             try {
                 spelbordModel.parseZetTegenstander(ontvangZet.get());
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e ) {
                 e.printStackTrace();
             }
         });
@@ -121,6 +121,12 @@ public class ServerController {
         if (serverOut != null) {
             serverOut.println("Q");
             try {
+                if (wachtOpkiezen != null){
+                    wachtOpkiezen.cancel();
+                }
+                if (ontvangZet != null){
+                    ontvangZet.cancel();
+                }
                 socket.close();
             } catch (IOException ex) {
                 throw new RuntimeException("Er is iets misgegaan bij het sluiten van de socket " + ex);
@@ -132,8 +138,8 @@ public class ServerController {
         serverOut.println("I " + naam);
         String string = receive();
         if (string.equals("+")){
-            model.setNicknamebool(true);
             model.setNickname(naam);
+            model.setNicknamebool(true);
         }else {
             model.setNicknamebool(false);
             model.setNickname(null);
@@ -182,13 +188,13 @@ public class ServerController {
         if (input.length() == 1 && input.charAt(0) == '-'){
             model.setSpelStartBool(false);
         }else {
+            model.setTegenstander(input.substring(4));
             if (input.charAt(2) == 'T'){
                 model.setMaakSpelbord(true);
             }else {
                 model.setMaakSpelbord(false);
             }
             model.setSpelStartBool(true);
-            model.setTegenstander(input.substring(4));
         }
     }
 

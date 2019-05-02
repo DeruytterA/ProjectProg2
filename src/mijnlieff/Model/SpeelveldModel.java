@@ -105,11 +105,7 @@ public class SpeelveldModel implements Observable {
 
     public void initialize(boolean matchmaking){
         if (matchmaking){
-            if (mijnKleur.equals(STARTKLEUR)){
-                wachten = false;
-            }else {
-                wachten = true;
-            }
+            wachten = !mijnKleur.equals(STARTKLEUR);
             einde = false;
 
             veld = new Pion[11][11];
@@ -391,8 +387,42 @@ public class SpeelveldModel implements Observable {
             add(pion);
             overigePionnen.get(pion.getKleur()).remove(pion);
             checkSpelGedaan(mijnKleur);
+            if (!isMogelijkezet()){
+                slaStapOver();
+            }
         }
         awakeListners();
+    }
+
+    private boolean isMogelijkezet() {
+        ArrayList<Pion> lijst = new ArrayList<>();
+        for (Coordinaat coordinaat:bordconfiguratie) {
+            if (laatstePion.checkCoordinates(coordinaat.getX(), coordinaat.getY())){
+                Pion pion = veld[coordinaat.getX()][coordinaat.getY()];
+                if (pion instanceof LegePion){
+                    lijst.add(pion);
+                }
+            }
+            if (laatstePion.checkCoordinates(coordinaat.getX() + 1, coordinaat.getY())){
+                Pion pion = veld[coordinaat.getX() + 1][coordinaat.getY()];
+                if (pion instanceof LegePion){
+                    lijst.add(pion);
+                }
+            }
+            if (laatstePion.checkCoordinates(coordinaat.getX(), coordinaat.getY() + 1)){
+                Pion pion = veld[coordinaat.getX()][coordinaat.getY() + 1];
+                if (pion instanceof LegePion){
+                    lijst.add(pion);
+                }
+            }
+            if (laatstePion.checkCoordinates(coordinaat.getX() + 1, coordinaat.getY() + 1)){
+                Pion pion = veld[coordinaat.getX() + 1][coordinaat.getY() + 1];
+                if (pion instanceof LegePion){
+                    lijst.add(pion);
+                }
+            }
+        }
+        return lijst.size() > 0;
     }
 
     public void checkSpelGedaan(Kleur kleur) {
@@ -412,12 +442,13 @@ public class SpeelveldModel implements Observable {
             int tegenstanderPionnenDezeRij = 0;
             int mijnPionnenKolom = 0;
             int tegenstanderPionnenKolom = 0;
+
             for (int j = 0; j < veld[i].length ; j++) {
                 if (inSpelVeld[i][j]){
                     Pion pion = veld[i][j];
                     if (pion.getKleur().equals(mijnKleur)){
                         mijnPionnenDezeRij++;
-                    }else {
+                    }else if (pion.getKleur().equals(veranderKleur(mijnKleur))){
                         tegenstanderPionnenDezeRij++;
                     }
                 }
@@ -425,11 +456,12 @@ public class SpeelveldModel implements Observable {
                     Pion pion = veld[j][i];
                     if (pion.getKleur().equals(mijnKleur)){
                         mijnPionnenKolom++;
-                    }else {
+                    }else if (pion.getKleur().equals(veranderKleur(mijnKleur))){
                         tegenstanderPionnenKolom++;
                     }
                 }
             }
+
             if (mijnPionnenKolom > 2){
                 mijnPunten += addPunten(mijnPionnenKolom);
             }
@@ -442,97 +474,95 @@ public class SpeelveldModel implements Observable {
             if (tegenstanderPionnenDezeRij > 2){
                 tegenstanderPunten += addPunten(tegenstanderPionnenDezeRij);
             }
-        }
-        int i = 0;
-        int j = 0;
-        while (i < 11 && j < 11){
-            int aantalDezeDiagonaalMij = 0;
-            int aantalDezeDiagonaalTegenstander = 0;
-            int ii = i;
-            int jj = j;
-            while (ii >= 0 && jj >= 0 && ii < veld.length && jj < veld.length){
-                if (inSpelVeld[ii][jj]){
-                    Pion pion = veld[ii][jj];
+        }//berken punten van de rijen en de kolommen
+
+        for (int i = veld.length - 1; i > 0; i--) {
+
+            int mijnpionnen = 0;
+            int tegenstanderPionnen = 0;
+
+            for (int j = 0, x = i; x <= veld.length - 1; j++, x++) {
+                if (inSpelVeld[x][j]){
+                    Pion pion = veld[x][j];
                     if (pion.getKleur().equals(mijnKleur)){
-                        aantalDezeDiagonaalMij++;
-                    }else {
-                        aantalDezeDiagonaalTegenstander++;
+                        mijnpionnen++;
+                    }else if (pion.getKleur().equals(veranderKleur(mijnKleur))){
+                        tegenstanderPionnen++;
                     }
                 }
-                ii--;
-                jj++;
             }
-            ii = i+1;
-            jj = j-1;
-            while (ii >= 0 && jj >= 0 && ii < veld.length && jj < veld.length){
-                if (inSpelVeld[ii][jj]){
-                    Pion pion = veld[ii][jj];
-                    if (pion.getKleur().equals(mijnKleur)){
-                        aantalDezeDiagonaalMij++;
-                    }else {
-                        aantalDezeDiagonaalTegenstander++;
+            if (mijnpionnen > 2){
+                mijnPunten += addPunten(mijnpionnen);
+            }
+            if (tegenstanderPionnen > 2){
+                tegenstanderPunten += addPunten(tegenstanderPionnen);
+            }
+        }//bereken punten van hoofdDiagonaal onder
+
+        for (int i = 0; i <= veld.length - 1; i++) {
+
+            int mijnpionnen = 0;
+            int tegenstanderPionnen = 0;
+
+            for (int j = 0, y = i; y <= veld.length - 1; j++, y++) {
+                if (inSpelVeld[j][y]){
+                    Pion pion = veld[j][y];
+                    if (!pion.getKleur().equals(mijnKleur)){
+                        tegenstanderPionnen++;
+                    }else if (pion.getKleur().equals(veranderKleur(mijnKleur))){
+                        mijnpionnen++;
                     }
                 }
-                ii++;
-                jj--;
             }
-            if (i == j){
-                i++;
-            }else {
-                j++;
+            if (mijnpionnen > 2){
+                mijnPunten += addPunten(mijnpionnen);
             }
-            if (aantalDezeDiagonaalMij > 2 ){
-                mijnPunten += addPunten(aantalDezeDiagonaalMij);
+            if (tegenstanderPionnen > 2){
+                tegenstanderPunten += addPunten(tegenstanderPionnen);
             }
-            if (aantalDezeDiagonaalTegenstander > 2){
-                tegenstanderPunten += addPunten(aantalDezeDiagonaalTegenstander);
-            }
-        }
-        i = veld.length - 1;
-        j = 0;
-        while (i > 0 && j < 11){
-            int aantalDezeDiagonaalMij = 0;
-            int aantalDezeDiagonaalTegenstander = 0;
-            int ii = i;
-            int jj = j;
-            while (ii >= 0 && jj >= 0 && ii < veld.length && jj < veld.length){
-                if (inSpelVeld[ii][jj]){
-                    Pion pion = veld[ii][jj];
-                    if (pion.getKleur().equals(mijnKleur)){
-                        aantalDezeDiagonaalMij++;
-                    }else {
-                        aantalDezeDiagonaalTegenstander++;
+        }//bereken punten van hoofdDiagonaal boven
+
+        for( int k = 0 ; k < veld.length ; k++ ) {
+            int mijnPionnnen = 0;
+            int tegenstanderPionnen = 0;
+            for( int j = 0 ; j <= k ; j++ ) {
+                int i = k - j;
+                if (inSpelVeld[i][j]){
+                    if (veld[i][j].getKleur().equals(mijnKleur)){
+                        mijnPionnnen++;
+                    }else if (veld[i][j].getKleur().equals(veranderKleur(mijnKleur))){
+                        tegenstanderPionnen++;
                     }
                 }
-                ii++;
-                jj++;
             }
-            ii = i-1;
-            jj = j-1;
-            while (ii >= 0 && jj >= 0 && ii < veld.length && jj < veld.length){
-                if (inSpelVeld[ii][jj]){
-                    Pion pion = veld[ii][jj];
-                    if (pion.getKleur().equals(mijnKleur)){
-                        aantalDezeDiagonaalMij++;
-                    }else {
-                        aantalDezeDiagonaalTegenstander++;
+            if (mijnPionnnen > 2){
+                mijnPunten += addPunten(mijnPionnnen);
+            }
+            if (tegenstanderPionnen > 2){
+                tegenstanderPunten += addPunten(tegenstanderPionnen);
+            }
+        } //bereken punten van zijDiagonaal boven
+
+        for( int k = veld.length - 2 ; k >= 0 ; k-- ) {
+            int mijnPionnnen = 0;
+            int tegenstanderPionnen = 0;
+            for( int j = 0 ; j <= k ; j++ ) {
+                int i = k - j;
+                if (inSpelVeld[veld.length - j - 1][veld.length - i - 1]){
+                    if (veld[i][j].getKleur().equals(mijnKleur)){
+                        mijnPionnnen++;
+                    }else if (veld[i][j].getKleur().equals(veranderKleur(mijnKleur))){
+                        tegenstanderPionnen++;
                     }
                 }
-                ii--;
-                jj--;
             }
-            if (i + j == 11){
-                j ++;
-            }else {
-                i --;
+            if (mijnPionnnen > 2){
+                mijnPunten += addPunten(mijnPionnnen);
             }
-            if (aantalDezeDiagonaalMij > 2 ){
-                mijnPunten += addPunten(aantalDezeDiagonaalMij);
+            if (tegenstanderPionnen > 2){
+                tegenstanderPunten += addPunten(tegenstanderPionnen);
             }
-            if (aantalDezeDiagonaalTegenstander > 2){
-                tegenstanderPunten += addPunten(aantalDezeDiagonaalTegenstander);
-            }
-        }
+        }//bereken punten van zijDiagonaal onder
     }
 
     public void stuurZet(int x, int y, Pion pion) {
@@ -575,11 +605,11 @@ public class SpeelveldModel implements Observable {
         awakeListners();
     }
 
-    public Integer getMijnPunten() {
+    public Integer getMijnPunten(){
         return mijnPunten;
     }
 
-    public Integer getTegenstanderPunten() {
+    public Integer getTegenstanderPunten(){
         return tegenstanderPunten;
     }
 

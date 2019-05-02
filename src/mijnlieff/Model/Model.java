@@ -98,7 +98,6 @@ public class Model implements Observable {
 
     public void setNickname(String nickname){
         nicknameString = nickname;
-        awakeListners();
     }
 
     public void setNicknamebool(boolean nickname){
@@ -152,7 +151,6 @@ public class Model implements Observable {
 
     public void setTegenstander(String tegenstander) {
         this.tegenstander = tegenstander;
-        awakeListners();
     }
 
     public boolean isQuit() {

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="borderPane" prefHeight="800.0" prefWidth="1000.0" styleClass="header-section" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" >
+<BorderPane fx:id="borderPane" prefHeight="800.0" prefWidth="1000.0" styleClass="header-section" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <stylesheets>
         <URL value="@Algemeen.css" />
     </stylesheets>
@@ -21,10 +21,11 @@
                 </Label>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
+                  <Label fx:id="nicknameLabel" alignment="CENTER_RIGHT" text="Jouw nickname is: " />
                   <Label fx:id="tegenstanderLabel" text="Jouw tegenstander is: " />
-                  <Label fx:id="nicknameLabel" text="Jouw nickname is: " />
                </children>
             </HBox>
+            <Label fx:id="kleurLabel" text="Label" />
             </children>
         </VBox>
     </top>

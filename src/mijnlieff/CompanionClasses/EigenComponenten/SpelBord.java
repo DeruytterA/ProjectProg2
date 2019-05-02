@@ -32,10 +32,6 @@ public class SpelBord extends BorderPane {
     public void invalidate(){
         model.awakeListners();
     }
-
-    public SpelbordCompanion getCompanion(){
-        return companion;
-    }
 }
 
 

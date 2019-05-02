@@ -14,18 +14,15 @@ public class MatchmakingSpelbord extends StackPane {
     private Label wacht;
     private VBox vbox;
 
-    public MatchmakingSpelbord(SpelBord spelBord, SpeelveldModel model){
+    public MatchmakingSpelbord(SpelBord spelBord){
         super();
         vbox = new VBox();
-        Button slaOverButton = new Button("Sla deze zet over");
         vbox.getChildren().add(spelBord);
-        vbox.getChildren().add(slaOverButton);
         this.getChildren().add(vbox);
         wacht = new Label("Wacht op zet tegenstander");
         wacht.setAlignment(Pos.CENTER);
         wacht.setFont(new Font(50));
         wacht.setTextFill(Color.BLACK);
-        slaOverButton.setOnMouseClicked( o -> model.slaStapOver());
     }
 
     public void setWacht(boolean bool){

@@ -30,6 +30,9 @@ public class AlgemeenMatchmakingCompanion extends MyController {
     @FXML
     private Label nicknameLabel;
 
+    @FXML
+    private Label kleurLabel;
+
     private SpelStadium stadium;
     private Login loginScreen;
     private Nickname nicknameScreen;
@@ -60,6 +63,9 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     public void initialize(){
         borderPane.setCenter(loginScreen);
+        nicknameLabel.setVisible(false);
+        tegenstanderLabel.setVisible(false);
+        kleurLabel.setVisible(false);
     }
 
     @Override
@@ -81,17 +87,11 @@ public class AlgemeenMatchmakingCompanion extends MyController {
                 alert.setContentText("Je hebt gelijk gespeeld! \n Jij hebt " + speelveldModel.getMijnPunten() + " punten en de tegenstander ook.");
                 alert.showAndWait();
             }
-            Platform.exit();
+            Platform.runLater(Platform::exit);
         }else if (model.isQuit() || (speelveldModel != null && speelveldModel.isQuit())){
             showAlert("Quit", "De andere speler is geQuit het spel wordt afgesloten");
-            Platform.exit();
+            Platform.runLater(Platform::exit);
         }else{
-            if (model.getNicknamebool()){
-                nicknameLabel.setText("jouw nickname is: " + model.getNicknameString());
-            }
-            if (model.isspelStart()){
-                tegenstanderLabel.setText("jouw tegenstander is: " + model.getTegenstander());
-            }
             map.get(stadium).accept(null);
         }
     }
@@ -102,11 +102,15 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             spelbordKiezerScreen.setModel(model);
             borderPane.setCenter(spelbordKiezerScreen);
             stadium = SpelStadium.SpelBordKiezer;
+            kleurLabel.setText("Jij bent: zwart");
+            kleurLabel.setVisible(true);
         } else {
             Wachten wachten = new Wachten("Wacht op het spelbord van de tegenstander");
             borderPane.setCenter(wachten);
             stadium = SpelStadium.WachtOpSpelbord;
             model.serverWachtOpSpelBord();
+            kleurLabel.setText("Jij bent: wit");
+            kleurLabel.setVisible(true);
         }
     }
 
@@ -120,6 +124,8 @@ public class AlgemeenMatchmakingCompanion extends MyController {
     public void checkWachtOpkiezen(){
         if (model.isspelStart()){
             iseerst();
+            tegenstanderLabel.setText("jouw tegenstander is: " + model.getTegenstander());
+            tegenstanderLabel.setVisible(true);
         }
     }
 
@@ -135,15 +141,22 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             speelveldModel = model.getSpeelveldModel();
             SpelBord spelBord = new SpelBord(speelveldModel);
             speelveldModel.addListener(this);
-            spelbord = new MatchmakingSpelbord(spelBord, speelveldModel);
+            spelbord = new MatchmakingSpelbord(spelBord);
+            spelbord.setWacht(speelveldModel.isWachten());
             borderPane.setCenter(spelbord);
-            stadium = SpelStadium.Spelbord;
+            if (speelveldModel.isWachten()){
+                stadium = SpelStadium.WachtOpTegenSpeler;
+            }else {
+                stadium = SpelStadium.Spelbord;
+            }
         }
     }
 
     public void checkTabel(){
         if (model.isspelStart()) {
             iseerst();
+            tegenstanderLabel.setText("jouw tegenstander is: " + model.getTegenstander());
+            tegenstanderLabel.setVisible(true);
         }else if (model.isInLijst()){
             Wachten wachten = new Wachten("Wacht tot je gekozen wordt");
             borderPane.setCenter(wachten);
@@ -156,6 +169,8 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             tabelScreen = new MatchmakingTabel(model);
             tabelScreen.setModel(model);
             borderPane.setCenter(tabelScreen);
+            nicknameLabel.setText("jouw nickname is: " + model.getNicknameString());
+            nicknameLabel.setVisible(true);
             stadium = SpelStadium.Tabel;
         }else if (!nicknameScreen.getTextField().equals("")){
             showAlert("Nickname in use", "The nickname you chose is already in use please try another one.");
