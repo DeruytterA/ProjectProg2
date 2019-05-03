@@ -42,6 +42,7 @@ public class SpeelveldModel implements Observable {
     private Map<Kleur, ArrayList<Pion>> overigePionnen;
     private Map<Kleur, Map<Character, ArrayList<Pion>>> allePionnenMap;
     private Map<Character, Supplier<Pion>> characterSupplierMap;
+    private boolean valsGespeeld;
 
     public class Coordinaat{
         private int x;
@@ -104,6 +105,7 @@ public class SpeelveldModel implements Observable {
     }
 
     public void initialize(boolean matchmaking){
+        valsGespeeld = false;
         if (matchmaking){
             wachten = !mijnKleur.equals(STARTKLEUR);
             einde = false;
@@ -316,7 +318,6 @@ public class SpeelveldModel implements Observable {
         pion.setModel(this);
         stappenlijst.add(pion);
         pion.setCoordinaten(xWaarde, yWaarde);
-        laatstePion = pion;
         return pion;
     }
 
@@ -378,23 +379,36 @@ public class SpeelveldModel implements Observable {
                 quit = true;
                 awakeListners();
             }else if (string.charAt(0) == 'X'){
+                System.out.println("tegenstander heeft stap overgeslaan");
                 checkSpelGedaan(mijnKleur);
                 wachten = false;
-                laatstePion = new ZwartePion(matchmaking);
+                laatstePion = new LegePion(matchmaking);
             }
         }else {
+            System.out.println("tegenstander heeft: " + string + " gestuurd");
             Pion pion = parseStringToPion(string, veranderKleur(mijnKleur));
-            add(pion);
-            overigePionnen.get(pion.getKleur()).remove(pion);
-            checkSpelGedaan(mijnKleur);
-            if (!isMogelijkezet()){
-                slaStapOver();
+            if (laatstePion.checkCoordinates(pion.getXwaarde(), pion.getYwaarde())){
+                System.out.println("pion van tegenstander is een geldige zet");
+                add(pion);
+                overigePionnen.get(pion.getKleur()).remove(pion);
+                laatstePion = pion;
+                wachten = false;
+                checkSpelGedaan(mijnKleur);
+                if (!isMogelijkezet()){
+                    System.out.println("ik kan geen geldige zet doen ik sla mijn stap over");
+                    slaStapOver();
+                }else {
+                    System.out.println("ik kan wel een geldige zet doen");
+                }
+            }else {
+                valsGespeeld = true;
             }
         }
         awakeListners();
     }
 
     private boolean isMogelijkezet() {
+        System.out.println("ik check of ik nog een geldige zet kan doen");
         ArrayList<Pion> lijst = new ArrayList<>();
         for (Coordinaat coordinaat:bordconfiguratie) {
             if (laatstePion.checkCoordinates(coordinaat.getX(), coordinaat.getY())){
@@ -422,6 +436,7 @@ public class SpeelveldModel implements Observable {
                 }
             }
         }
+        System.out.println("kan ik een geldige zet doen?: " + (lijst.size() > 0));
         return lijst.size() > 0;
     }
 
@@ -551,10 +566,12 @@ public class SpeelveldModel implements Observable {
             for( int j = 0 ; j <= k ; j++ ) {
                 int i = k - j;
                 if (inSpelVeld[veld.length - j - 1][veld.length - i - 1]){
-                    if (veld[i][j].getKleur().equals(mijnKleur)){
-                        mijnPionnnen++;
-                    }else if (veld[i][j].getKleur().equals(veranderKleur(mijnKleur))){
-                        tegenstanderPionnen++;
+                    if (inSpelVeld[i][j]){
+                        if (veld[i][j].getKleur().equals(mijnKleur)){
+                            mijnPionnnen++;
+                        }else if (veld[i][j].getKleur().equals(veranderKleur(mijnKleur))){
+                            tegenstanderPionnen++;
+                        }
                     }
                 }
             }
@@ -599,8 +616,10 @@ public class SpeelveldModel implements Observable {
 
     public void slaStapOver(){
         wachten = true;
+        System.out.println("ik stuur een x");
         serverController.stuurZet("X");
         checkSpelGedaan(veranderKleur(mijnKleur));
+        laatstePion = new LegePion(matchmaking);
         if (!einde){
             serverController.ontvangZet();
         }
@@ -617,5 +636,9 @@ public class SpeelveldModel implements Observable {
 
     public ObservableList getStappenlijst(){
         return stappenlijst;
+    }
+
+    public boolean isValsGespeeld() {
+        return valsGespeeld;
     }
 }

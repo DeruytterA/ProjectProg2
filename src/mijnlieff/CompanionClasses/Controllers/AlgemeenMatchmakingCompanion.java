@@ -92,7 +92,6 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             if (!exit){
                 exit = true;
                 model.serverQuit();
-                System.out.println("platform exit na punten");
                 Platform.exit();
             }
         }else if ((model.isQuit() || (speelveldModel != null && speelveldModel.isQuit()) && !exit) ){
@@ -100,7 +99,6 @@ public class AlgemeenMatchmakingCompanion extends MyController {
             if (!exit){
                 exit = true;
                 model.serverQuit();
-                System.out.println("platform exit na quit");
                 Platform.exit();
             }
         }else{
@@ -142,7 +140,11 @@ public class AlgemeenMatchmakingCompanion extends MyController {
     }
 
     public void checkSpelbord(){
-        if (speelveldModel.isWachten()){
+        if (speelveldModel.isValsGespeeld()){
+            showAlert("Valsgespeeld", "De Tegenstander heeft vals gespeeld het spel wordt nu afgesloten");
+            model.serverQuit();
+            Platform.exit();
+        }else if (speelveldModel.isWachten()){
             spelbord.setWacht(true);
             stadium = SpelStadium.WachtOpTegenSpeler;
         }

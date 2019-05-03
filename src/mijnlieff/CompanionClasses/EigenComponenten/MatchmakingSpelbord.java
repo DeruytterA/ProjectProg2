@@ -1,7 +1,6 @@
 package mijnlieff.CompanionClasses.EigenComponenten;
 
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -30,6 +29,8 @@ public class MatchmakingSpelbord extends StackPane {
         if (bool){
             this.getChildren().add(wacht);
             wacht.setMouseTransparent(false);
+            wacht.setPrefWidth(this.getWidth());
+            wacht.setPrefHeight(this.getHeight());
         }else{
             this.getChildren().remove(wacht);
         }

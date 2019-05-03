@@ -72,6 +72,7 @@ public class ServerController {
     }
 
     public void ontvangZet(){
+        System.out.println("ik ontvang mijn volgende zet");
         ontvangZet = new Task<>() {
             @Override
             protected String call(){
@@ -97,7 +98,6 @@ public class ServerController {
             }
             return lijn;
         } catch (IOException e) {
-            e.printStackTrace();
             return "";
         }
     }
