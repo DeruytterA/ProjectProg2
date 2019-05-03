@@ -16,7 +16,7 @@
       </Label>
       <ImageView fitHeight="556.0" fitWidth="434.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="/mijnlieff/Photos/giphy (1).gif" />
+            <Image url="/mijnlieff/Photos/giphy.gif" />
          </image>
       </ImageView>
    </children>
