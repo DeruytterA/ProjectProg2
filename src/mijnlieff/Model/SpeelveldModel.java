@@ -247,8 +247,8 @@ public class SpeelveldModel implements Observable {
             laatstePion = pion;
             teVerplaatsenPion = null;
             overigePionnen.get(pion.getKleur()).remove(pion);
-            stuurZet(x,y,pion);
             stappenlijst.add(pion);
+            stuurZet(x,y,pion);
             awakeListners();
         }
     }
@@ -437,6 +437,8 @@ public class SpeelveldModel implements Observable {
     }
 
     private void berekenPunten() {
+        mijnPunten = 0;
+        tegenstanderPunten = 0;
         for (int i = 0; i < veld.length; i++) {
             int mijnPionnenDezeRij = 0;
             int tegenstanderPionnenDezeRij = 0;

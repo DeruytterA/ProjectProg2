@@ -81,6 +81,10 @@ public class Model implements Observable {
         serverController.getOpponents(lijst);
     }
 
+    public void serverQuit(){
+        serverController.close();
+    }
+
     //vanaf hier alle getters en setters van het Model
 
     public boolean getServeraan(){

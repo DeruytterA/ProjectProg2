@@ -7,7 +7,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import mijnlieff.Model.SpeelveldModel;
 
 public class MatchmakingSpelbord extends StackPane {
 
@@ -23,14 +22,14 @@ public class MatchmakingSpelbord extends StackPane {
         wacht.setAlignment(Pos.CENTER);
         wacht.setFont(new Font(50));
         wacht.setTextFill(Color.BLACK);
+        wacht.setPrefWidth(this.getWidth());
+        wacht.setPrefHeight(this.getHeight());
     }
 
     public void setWacht(boolean bool){
         if (bool){
             this.getChildren().add(wacht);
             wacht.setMouseTransparent(false);
-            wacht.setPrefWidth(this.getWidth());
-            wacht.setPrefHeight(this.getHeight());
         }else{
             this.getChildren().remove(wacht);
         }

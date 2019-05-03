@@ -50,6 +50,7 @@ public class Mijnlieff extends Application {
         primaryStage.show();
     }
 
+    @Override
     public void stop(){
         if (serverController != null){
             serverController.close();

@@ -40,10 +40,12 @@ public class AlgemeenMatchmakingCompanion extends MyController {
     private SpelbordKiezer spelbordKiezerScreen;
     private SpeelveldModel speelveldModel;
     private MatchmakingSpelbord spelbord;
+    private boolean exit;
 
     private Map<SpelStadium, Consumer> map;
 
     public AlgemeenMatchmakingCompanion(Model model) {
+        exit = false;
         model.addListener(this);
         this.model = model;
         loginScreen = new Login();
@@ -70,7 +72,7 @@ public class AlgemeenMatchmakingCompanion extends MyController {
 
     @Override
     public void invalidated(Observable var1) {
-        if ( speelveldModel != null && speelveldModel.isEinde()){
+        if ( speelveldModel != null && speelveldModel.isEinde() && !exit){
             if (speelveldModel.getMijnPunten() > speelveldModel.getTegenstanderPunten()){
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Het spel is gedaan!");
@@ -87,10 +89,20 @@ public class AlgemeenMatchmakingCompanion extends MyController {
                 alert.setContentText("Je hebt gelijk gespeeld! \n Jij hebt " + speelveldModel.getMijnPunten() + " punten en de tegenstander ook.");
                 alert.showAndWait();
             }
-            Platform.runLater(Platform::exit);
-        }else if (model.isQuit() || (speelveldModel != null && speelveldModel.isQuit())){
+            if (!exit){
+                exit = true;
+                model.serverQuit();
+                System.out.println("platform exit na punten");
+                Platform.exit();
+            }
+        }else if ((model.isQuit() || (speelveldModel != null && speelveldModel.isQuit()) && !exit) ){
             showAlert("Quit", "De andere speler is geQuit het spel wordt afgesloten");
-            Platform.runLater(Platform::exit);
+            if (!exit){
+                exit = true;
+                model.serverQuit();
+                System.out.println("platform exit na quit");
+                Platform.exit();
+            }
         }else{
             map.get(stadium).accept(null);
         }
